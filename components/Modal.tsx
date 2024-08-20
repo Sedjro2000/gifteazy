@@ -23,15 +23,24 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
 
   const handleAddToList = () => {
     if (newListName) {
+      console.log('Creating new list with name:', newListName);
       addList(newListName); // Create a new list if name is provided
+      console.log('List created:', newListName);
       setNewListName(''); // Clear the input field
     } else if (selectedListId) {
-      addItemToList(selectedListId, {
+      const itemToAdd = {
         name: item?.name ?? '',
         price: item?.price ?? '',
         image: item?.image ?? '',
-      });
+      };
+      console.log('Adding item to existing list:', selectedListId);
+      console.log('Item details:', itemToAdd);
+      
+      addItemToList(selectedListId, itemToAdd); // Use the list ID to add the item
+      console.log('Item added to list:', selectedListId, itemToAdd);
       onClose(); // Close the modal after adding the item
+    } else {
+      console.log('No list selected or new list name provided.');
     }
   };
 

@@ -16,51 +16,69 @@ type List = {
 type ListContextType = {
   lists: List[];
   addList: (listName: string) => void;
-  addItemToList: (listName: string, item: Item) => void;
+  addItemToList: (listId: string, item: Item) => void; // Modifié pour utiliser listId
 };
 
 const ListContext = createContext<ListContextType | undefined>(undefined);
 
 export const ListProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [lists, setLists] = useState<List[]>(() => {
-    if (typeof window !== 'undefined') { // Ensure this runs only in the browser
+    if (typeof window !== 'undefined') {
       const savedLists = localStorage.getItem('lists');
       console.log('Loaded lists from localStorage:', savedLists);
       return savedLists ? JSON.parse(savedLists) : [];
     }
-    return []; // Default to an empty array if not in the browser
+    return [];
   });
 
   useEffect(() => {
-    if (typeof window !== 'undefined') { // Ensure this runs only in the browser
+    if (typeof window !== 'undefined') {
       localStorage.setItem('lists', JSON.stringify(lists));
       console.log('Saved lists to localStorage:', lists);
     }
   }, [lists]);
 
   const addList = (name: string) => {
-    setLists(prevLists => [
-      ...prevLists,
-      {
-        id: generateUniqueId(), // Ensure a unique ID is generated
+    setLists(prevLists => {
+      const newList = {
+        id: generateUniqueId(),
         name: name,
         items: [],
-      }
-    ]);
-    console.log('Added new list:', name);
+      };
+      console.log('Added new list:', newList);
+      return [...prevLists, newList];
+    });
   };
-
-  const addItemToList = (listName: string, item: Item) => {
-    setLists(prevLists => {
-      const updatedLists = prevLists.map(list =>
-        list.name === listName ? { ...list, items: [...list.items, item] } : list
-      );
-      console.log('Item added to list:', listName, item);
+  const addItemToList = (listId: string, item: { name: string; price: string; image: string }) => {
+    setLists((prevLists) => {
+      console.log('Previous lists:', prevLists);
+  
+      const updatedLists = prevLists.map((list) => {
+        if (list.id === listId) {
+          console.log('Found matching list:', list);
+          // Ajoutez l'article à la liste correspondante
+          return { ...list, items: [...list.items, item] };
+        }
+        return list;
+      });
+  
+      console.log('Updated lists before saving to localStorage:', updatedLists);
+  
+      // Sauvegardez la liste mise à jour dans localStorage
+      localStorage.setItem('lists', JSON.stringify(updatedLists));
+      
+      // Vérifiez ce qui est stocké dans localStorage après sauvegarde
+      console.log('Data saved to localStorage:', localStorage.getItem('lists'));
+  
+      // Affichez les listes mises à jour dans localStorage
+      console.log('Updated lists in localStorage:', JSON.parse(localStorage.getItem('lists') ?? '[]'));
+  
       return updatedLists;
     });
   };
-
-  // Helper function to generate unique IDs
+  
+  
+  
   const generateUniqueId = (): string => {
     return '_' + Math.random().toString(36).substr(2, 9);
   };

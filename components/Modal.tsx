@@ -1,5 +1,6 @@
-import React from 'react';
-import { useCart } from 'react-use-cart';
+'use client'
+import React, { useState, useEffect } from 'react';
+import { useLists } from '../context/ListsContext';
 
 interface ModalProps {
   isOpen: boolean;
@@ -8,24 +9,37 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
-  const { addItem } = useCart();
+  const { lists, addList, addItemToList } = useLists();
+  const [selectedListId, setSelectedListId] = useState<string>('');
+  const [newListName, setNewListName] = useState<string>('');
 
-  if (!isOpen || !item) return null;
+  useEffect(() => {
+    if (isOpen) {
+      // Reset the form when modal opens
+      setSelectedListId('');
+      setNewListName('');
+    }
+  }, [isOpen]);
 
   const handleAddToList = () => {
-    addItem({
-      id: item.name,
-      name: item.name,
-      price: parseFloat(item.price.replace('$', '')),
-      image: item.image,
-    });
-    onClose();
+    if (newListName) {
+      addList(newListName); // Create a new list if name is provided
+      setNewListName(''); // Clear the input field
+    } else if (selectedListId) {
+      addItemToList(selectedListId, {
+        name: item?.name ?? '',
+        price: item?.price ?? '',
+        image: item?.image ?? '',
+      });
+      onClose(); // Close the modal after adding the item
+    }
   };
+
+  if (!isOpen || !item) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
       <div className="bg-yellow-100 bg-opacity-30 backdrop-blur-sm rounded-lg shadow-md w-1/2 flex overflow-hidden p-8">
-        {/* Modal content */}
         <div className="flex-1 p-4">
           <img src={item.image} alt={item.name} className="w-full h-96 object-cover rounded-lg" />
           <button className="mt-4 flex items-center justify-center bg-gray-200 text-gray-700 py-2 px-4 rounded-lg">
@@ -44,20 +58,40 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
           <div className="mb-4">
             <span className="text-sm">Article Number: 903.031.06</span>
           </div>
-          <div className="flex items-center mb-4">
-            <button className="bg-gray-200 text-gray-700 py-2 px-4 rounded-lg mr-4">
-              -
-            </button>
-            <span>1</span>
-            <button className="bg-gray-200 text-gray-700 py-2 px-4 rounded-lg ml-4">
-              +
-            </button>
+          <p className="text-yellow-300 mb-4">{item.price}</p>
+          <div className="text-yellow-300 mb-4">
+            ★★★★★
           </div>
-          <button
-            onClick={handleAddToList}
-            className="bg-yellow-500 text-white w-full py-2 rounded-lg"
+          <div className="mb-4">
+            <label className="block text-white mb-2">Choose a list</label>
+            <select 
+              value={selectedListId} 
+              onChange={(e) => setSelectedListId(e.target.value)} 
+              className="border rounded p-2 w-full"
+            >
+              <option value="">Select a list</option>
+              {lists.map(list => (
+                <option key={list.id} value={list.id}>
+                  {list.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-white mb-2">Or create a new list</label>
+            <input 
+              type="text" 
+              value={newListName} 
+              onChange={(e) => setNewListName(e.target.value)} 
+              placeholder="New list name" 
+              className="border rounded p-2 w-full"
+            />
+          </div>
+          <button 
+            onClick={handleAddToList} 
+            className="bg-blue-500 text-white rounded-full px-4 py-2 hover:bg-blue-600"
           >
-            Ajouter à la liste ({item.price})
+            {newListName ? 'Create and Add to List' : 'Add to List'}
           </button>
         </div>
       </div>

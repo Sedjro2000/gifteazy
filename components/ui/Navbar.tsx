@@ -20,7 +20,7 @@ const Navbar: React.FC = () => {
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-6">
               <a href="/" className="text-gray-900 hover:text-blue-500 px-3 py-2 rounded-md text-lg font-medium">Home</a>
-              <a href="/about" className="text-gray-900 hover:text-blue-500 px-3 py-2 rounded-md text-lg font-medium">About</a>
+              <a href="/list" className="text-gray-900 hover:text-blue-500 px-3 py-2 rounded-md text-lg font-medium">Mes listes</a>
               <a href="/services" className="text-gray-900 hover:text-blue-500 px-3 py-2 rounded-md text-lg font-medium">Services</a>
               <a href="/contact" className="text-gray-900 hover:text-blue-500 px-3 py-2 rounded-md text-lg font-medium">Contact</a>
             </div>
@@ -53,7 +53,7 @@ const Navbar: React.FC = () => {
         </div>
         <div className="flex flex-col items-center space-y-6 mt-10">
           <a href="/" className="text-gray-900 hover:text-blue-500 px-3 py-2 rounded-md text-lg font-medium">Home</a>
-          <a href="/about" className="text-gray-900 hover:text-blue-500 px-3 py-2 rounded-md text-lg font-medium">About</a>
+          <a href="/list" className="text-gray-900 hover:text-blue-500 px-3 py-2 rounded-md text-lg font-medium">Mes Listes</a>
           <a href="/services" className="text-gray-900 hover:text-blue-500 px-3 py-2 rounded-md text-lg font-medium">Services</a>
           <a href="/contact" className="text-gray-900 hover:text-blue-500 px-3 py-2 rounded-md text-lg font-medium">Contact</a>
         </div>

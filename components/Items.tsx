@@ -1,7 +1,15 @@
 'use client'
+
+'use client'
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Modal from './Modal';
+
+type Item = {
+  name: string;
+  price: string;
+  image: string;
+};
 
 const thematicCategories = [
   'Birthdays',
@@ -11,7 +19,7 @@ const thematicCategories = [
   'Weddings',
 ];
 
-const items = [
+const items: Item[] = [
   { name: 'Gift Box', price: '$50', image: '/item0.jpg' },
   { name: 'Valentine\'s Roses', price: '$30', image: '/item1.jpg' },
   { name: 'New Year Fireworks', price: '$100', image: '/item1.jpg' },
@@ -21,12 +29,13 @@ const items = [
 
 const Items: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<{ name: string; price: string; image: string } | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const router = useRouter();
 
   const isMobile = () => window.innerWidth <= 768;
 
-  const handleItemClick = (item: { name: string; price: string; image: string }) => {
+  const handleItemClick = (item: Item) => {
+    console.log('Item clicked:', item);
     if (isMobile()) {
       router.push(`/product/${item.name}`);
     } else {
@@ -36,6 +45,7 @@ const Items: React.FC = () => {
   };
 
   const closeModal = () => {
+    console.log('Modal closed');
     setIsModalOpen(false);
     setSelectedItem(null);
   };

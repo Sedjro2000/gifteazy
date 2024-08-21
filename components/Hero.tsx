@@ -31,22 +31,17 @@ export default function Home() {
   };
 
   return (
-    <div className="font-sans  max-w-7xl mx-auto  py-4 space-y-12">
+    <div className="font-sans  max-w-screen-2xl mx-auto  py-4 space-y-12">
       <div className="grid md:grid-cols-2 items-center gap-12">
         <div className="max-md:order-1 text-center md:text-left">
           <h2 className="text-gray-800 lg:text-6xl md:text-5xl text-3xl font-extrabold mb-4 leading-tight">
-            <span className="text-primary">Cadeau Spécial</span> pour <span className="text-secondary">Vous</span>
+            <span className="text-primary">Cadeau Spécial</span> pour <span className="text-secondary">Vos proches</span>
           </h2>
-          <p className="text-gray-500 mt-6 text-base leading-relaxed md:leading-7">
+          <p className="text-gray-500 mt-6 text-lg leading-relaxed md:leading-7 ">
             Célébrez ce moment avec un cadeau unique qui montre combien vous tenez à cette personne. Notre sélection spéciale est conçue pour apporter de la joie et créer des souvenirs durables.
           </p>
 
-          <button
-            type="button"
-            className="mt-6 bg-primary hover:bg-secondary border-2 border-primary transition-all text-white font-semibold text-sm tracking-wide rounded-md px-6 py-2.5"
-          >
-            Réclamez Votre Cadeau
-          </button>
+      
 
           <div className="mt-12 grid sm:grid-cols-3 gap-4 items-center">
             {[{ icon: FaStar, title: "Exclusif", desc: "Édition Limitée" },

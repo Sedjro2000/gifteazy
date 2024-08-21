@@ -30,13 +30,13 @@ const Navbar: React.FC = () => {
               <span className="sr-only">View profile</span>
               <FaUserCircle className="h-8 w-8" aria-hidden="true" />
             </button>
-            <button className="ml-4 bg-white p-2 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            {/*<button className="ml-4 bg-white p-2 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
               <span className="sr-only">View cart</span>
               <FaShoppingCart className="h-8 w-8" aria-hidden="true" />
             </button>
             <button onClick={toggleMenu} className="ml-4 md:hidden p-2 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
               {isOpen ? <FaTimes className="h-8 w-8" /> : <FaBars className="h-8 w-8" />}
-            </button>
+            </button>*/}
           </div>
         </div>
       </div>

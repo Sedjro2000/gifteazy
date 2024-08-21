@@ -5,7 +5,7 @@ import { FaGift, FaHandSparkles, FaRegLightbulb } from "react-icons/fa";
 
 export default function About() {
   return (
-    <section className="py-20 bg-gradient-to-r from-gray-100 to-gray-200">
+    <section className="py-20 bg-gradient-to-r from-gray-100 to-gray-200 max-w-screen-2xl mx-auto">
       <div className="max-w-7xl mx-auto px-6">
         <h2 className="text-5xl font-extrabold text-gray-900 mb-12 text-center tracking-wide">
           À Propos de Nous

@@ -54,7 +54,7 @@ const Items: React.FC = () => {
   };
 
   return (
-    <div className="p-8  max-w-7xl mx-auto">
+    <div className="p-8 max-w-screen-2xl mx-auto ">
       <h2 className="text-2xl font-bold mb-4">Get inspired</h2>
       <div className="flex space-x-4 mb-6">
         {thematicCategories.map((category, index) => (

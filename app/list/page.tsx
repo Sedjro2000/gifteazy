@@ -2,14 +2,14 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLists } from '../../context/ListsContext';
-import { FaShareAlt } from 'react-icons/fa';
+import { FaShareAlt, FaTrash } from 'react-icons/fa';
 import ShareModal from '../../components/ShareModal';
 
 const ListsPage: React.FC = () => {
   const [newListName, setNewListName] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedListName, setSelectedListName] = useState('');
-  const { lists, addList, deleteList } = useLists();
+  const { lists, addList, deleteList, deleteItemFromList } = useLists();
   const router = useRouter();
 
   const handleCreateList = () => {
@@ -25,6 +25,16 @@ const ListsPage: React.FC = () => {
     console.log(`Request to delete list with id "${listId}"`);
     deleteList(listId);
     console.log('Current lists state after deletion:', lists);
+  };
+
+  const handleDeleteItem = (listId: string, itemId: string | undefined) => {
+    if (itemId) {
+      console.log(`Request to delete item with id "${itemId}" from list "${listId}"`);
+      deleteItemFromList(listId, itemId);
+      console.log('Current lists state after item deletion:', lists);
+    } else {
+      console.error(`Item id is undefined for list "${listId}". Cannot delete item.`);
+    }
   };
 
   const handleShareList = (listName: string) => {
@@ -69,7 +79,7 @@ const ListsPage: React.FC = () => {
                         Partager
                       </button>
                       <button
-                        onClick={() => handleDeleteList(list.id)} // Assurez-vous d'utiliser list.id ici
+                        onClick={() => handleDeleteList(list.id)}
                         className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600 transition-colors duration-300 ml-2"
                       >
                         Supprimer
@@ -88,6 +98,12 @@ const ListsPage: React.FC = () => {
                           <div className="font-medium text-gray-800">{item.name}</div>
                           <div className="text-gray-600">{item.price}</div>
                         </div>
+                        <button
+                          onClick={() => handleDeleteItem(list.id, item.id)}
+                          className="text-red-500 hover:text-red-700 transition-colors duration-300 ml-auto"
+                        >
+                          <FaTrash />
+                        </button>
                       </li>
                     ))}
                   </ul>

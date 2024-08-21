@@ -1,7 +1,8 @@
-'use client'
+'use client';
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 
 type Item = {
+  id: string;
   name: string;
   price: string;
   image: string;
@@ -17,7 +18,8 @@ type ListContextType = {
   lists: List[];
   addList: (listName: string) => void;
   addItemToList: (listId: string, item: Item) => void;
-  deleteList: (listId: string) => void; // Nouvelle fonction pour supprimer une liste
+  deleteList: (listId: string) => void;
+  deleteItemFromList: (listId: string, itemId: string) => void;
 };
 
 const ListContext = createContext<ListContextType | undefined>(undefined);
@@ -51,35 +53,41 @@ export const ListProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
   };
 
-  const addItemToList = (listId: string, item: { name: string; price: string; image: string }) => {
-    setLists((prevLists) => {
-      console.log('Previous lists:', prevLists);
-  
-      const updatedLists = prevLists.map((list) => {
+  const addItemToList = (listId: string, item: Item) => {
+    setLists(prevLists => {
+      const updatedLists = prevLists.map(list => {
         if (list.id === listId) {
-          console.log('Found matching list:', list);
-          // Ajoutez l'article à la liste correspondante
-          return { ...list, items: [...list.items, item] };
+          const updatedItems = [...list.items, { ...item, id: generateUniqueId() }]; // Ajoute un ID unique ici
+          return { ...list, items: updatedItems };
         }
         return list;
       });
-  
-      console.log('Updated lists before saving to localStorage:', updatedLists);
-      localStorage.setItem('lists', JSON.stringify(updatedLists));
-      console.log('Data saved to localStorage:', localStorage.getItem('lists'));
-      console.log('Updated lists in localStorage:', JSON.parse(localStorage.getItem('lists') ?? '[]'));
-  
+      return updatedLists;
+    });
+  };
+  const deleteList = (listId: string) => {
+    setLists(prevLists => {
+      console.log('Current lists before deletion:', JSON.stringify(prevLists, null, 2));
+      const updatedLists = prevLists.filter(list => list.id !== listId);
+      console.log('Updated lists after deletion:', JSON.stringify(updatedLists, null, 2));
       return updatedLists;
     });
   };
 
-  const deleteList = (listId: string) => {
+  const deleteItemFromList = (listId: string, itemId: string) => {
     setLists(prevLists => {
-      console.log('Current lists before deletion:', prevLists);
-      const updatedLists = prevLists.filter(list => list.id !== listId);
-      console.log('Updated lists after deletion:', updatedLists);
-      localStorage.setItem('lists', JSON.stringify(updatedLists));
-      console.log('Data saved to localStorage after deletion:', localStorage.getItem('lists'));
+      console.log('Current lists before item deletion:', JSON.stringify(prevLists, null, 2));
+
+      const updatedLists = prevLists.map(list => {
+        if (list.id === listId) {
+          const updatedItems = list.items.filter(item => item.id !== itemId);
+          console.log(`Updated items after deleting item ${itemId}:`, JSON.stringify(updatedItems, null, 2));
+          return { ...list, items: updatedItems };
+        }
+        return list;
+      });
+
+      console.log('Updated lists after item deletion:', JSON.stringify(updatedLists, null, 2));
       return updatedLists;
     });
   };
@@ -89,7 +97,7 @@ export const ListProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <ListContext.Provider value={{ lists, addList, addItemToList, deleteList }}>
+    <ListContext.Provider value={{ lists, addList, addItemToList, deleteList, deleteItemFromList }}>
       {children}
     </ListContext.Provider>
   );
@@ -103,4 +111,4 @@ export const useLists = () => {
   return context;
 };
 
-export type { List };
+export type { List, Item };

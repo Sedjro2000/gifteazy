@@ -2,10 +2,14 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLists } from '../../context/ListsContext';
+import { FaShareAlt } from 'react-icons/fa';
+import ShareModal from '../../components/ShareModal';
 
 const ListsPage: React.FC = () => {
   const [newListName, setNewListName] = useState('');
-  const { lists, addList } = useLists();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedListName, setSelectedListName] = useState('');
+  const { lists, addList, deleteList } = useLists();
   const router = useRouter();
 
   const handleCreateList = () => {
@@ -17,22 +21,21 @@ const ListsPage: React.FC = () => {
     }
   };
 
-  const handleViewList = (listName: string) => {
-    router.push(`/list/${listName}`);
-    console.log('Viewing list:', listName);
+  const handleDeleteList = (listId: string) => {
+    console.log(`Request to delete list with id "${listId}"`);
+    deleteList(listId);
+    console.log('Current lists state after deletion:', lists);
   };
 
-  const handleDeleteList = (listName: string) => {
-    // Add delete logic here
-    console.log(`List "${listName}" deleted`);
-    // For demonstration, log the current lists state
-    console.log('Current lists state:', lists);
+  const handleShareList = (listName: string) => {
+    setSelectedListName(listName);
+    setIsModalOpen(true);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-8">
       <div className="max-w-3xl mx-auto">
-        <h2 className="text-3xl font-bold mb-6 text-gray-800">My Lists</h2>
+        <h2 className="text-3xl font-bold mb-6 text-gray-800">Mes Listes</h2>
         <div className="mb-6 flex">
           <input
             type="text"
@@ -59,14 +62,15 @@ const ListsPage: React.FC = () => {
                     <span className="text-xl font-semibold text-gray-700">{list.name}</span>
                     <div>
                       <button
-                        onClick={() => handleViewList(list.name)}
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300 mr-2"
+                        onClick={() => handleShareList(list.name)}
+                        className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 transition-colors duration-300"
                       >
-                        Voir
+                        <FaShareAlt className="inline-block mr-2" />
+                        Partager
                       </button>
                       <button
-                        onClick={() => handleDeleteList(list.name)}
-                        className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600 transition-colors duration-300"
+                        onClick={() => handleDeleteList(list.id)} // Assurez-vous d'utiliser list.id ici
+                        className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600 transition-colors duration-300 ml-2"
                       >
                         Supprimer
                       </button>
@@ -93,6 +97,11 @@ const ListsPage: React.FC = () => {
           </ul>
         )}
       </div>
+      <ShareModal
+        listName={selectedListName}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };

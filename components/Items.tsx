@@ -25,6 +25,9 @@ const items: Item[] = [
   { name: 'New Year Fireworks', price: '$100', image: '/item1.jpg' },
   { name: 'Christmas Tree', price: '$70', image: '/item0.jpg' },
   { name: 'Wedding Ring', price: '$500', image: '/ring.png' },
+  { name: 'New Year Fireworks', price: '$100', image: '/item1.jpg' },
+  { name: 'Christmas Tree', price: '$70', image: '/item0.jpg' },
+  { name: 'Wedding Ring', price: '$500', image: '/ring.png' },
 ];
 
 const Items: React.FC = () => {
@@ -51,7 +54,7 @@ const Items: React.FC = () => {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-8  max-w-7xl mx-auto">
       <h2 className="text-2xl font-bold mb-4">Get inspired</h2>
       <div className="flex space-x-4 mb-6">
         {thematicCategories.map((category, index) => (

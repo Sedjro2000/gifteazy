@@ -1,6 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import { useLists } from '../context/ListsContext';
+import { FiX } from 'react-icons/fi';
 
 interface ModalProps {
   isOpen: boolean;
@@ -58,7 +59,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
         <div className="flex-1 p-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">{item.name}</h2>
-            <button onClick={onClose} className="text-white hover:text-gray-700 text-2xl">X</button>
+            <button onClick={onClose} className="text-white hover:text-gray-700 text-2xl"> <FiX /></button>
           </div>
           <p className="text-yellow-300 mb-2">Coffee table, concrete, 90 cm</p>
           <p className="text-sm text-white mb-4">

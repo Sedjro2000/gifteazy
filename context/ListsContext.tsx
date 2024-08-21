@@ -16,7 +16,8 @@ type List = {
 type ListContextType = {
   lists: List[];
   addList: (listName: string) => void;
-  addItemToList: (listId: string, item: Item) => void; // Modifié pour utiliser listId
+  addItemToList: (listId: string, item: Item) => void;
+  deleteList: (listId: string) => void; // Nouvelle fonction pour supprimer une liste
 };
 
 const ListContext = createContext<ListContextType | undefined>(undefined);
@@ -49,6 +50,7 @@ export const ListProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return [...prevLists, newList];
     });
   };
+
   const addItemToList = (listId: string, item: { name: string; price: string; image: string }) => {
     setLists((prevLists) => {
       console.log('Previous lists:', prevLists);
@@ -63,28 +65,31 @@ export const ListProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       });
   
       console.log('Updated lists before saving to localStorage:', updatedLists);
-  
-      // Sauvegardez la liste mise à jour dans localStorage
       localStorage.setItem('lists', JSON.stringify(updatedLists));
-      
-      // Vérifiez ce qui est stocké dans localStorage après sauvegarde
       console.log('Data saved to localStorage:', localStorage.getItem('lists'));
-  
-      // Affichez les listes mises à jour dans localStorage
       console.log('Updated lists in localStorage:', JSON.parse(localStorage.getItem('lists') ?? '[]'));
   
       return updatedLists;
     });
   };
-  
-  
-  
+
+  const deleteList = (listId: string) => {
+    setLists(prevLists => {
+      console.log('Current lists before deletion:', prevLists);
+      const updatedLists = prevLists.filter(list => list.id !== listId);
+      console.log('Updated lists after deletion:', updatedLists);
+      localStorage.setItem('lists', JSON.stringify(updatedLists));
+      console.log('Data saved to localStorage after deletion:', localStorage.getItem('lists'));
+      return updatedLists;
+    });
+  };
+
   const generateUniqueId = (): string => {
     return '_' + Math.random().toString(36).substr(2, 9);
   };
 
   return (
-    <ListContext.Provider value={{ lists, addList, addItemToList }}>
+    <ListContext.Provider value={{ lists, addList, addItemToList, deleteList }}>
       {children}
     </ListContext.Provider>
   );

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { FaShoppingCart, FaUserCircle, FaBars, FaTimes } from 'react-icons/fa';
 import Image from 'next/image';
+import Link from 'next/link'
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,10 +20,10 @@ const Navbar: React.FC = () => {
           </div>
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-6">
-              <a href="/" className="text-gray-900 hover:text-blue-500 px-3 py-2 rounded-md text-lg font-medium">Home</a>
-              <a href="/list" className="text-gray-900 hover:text-blue-500 px-3 py-2 rounded-md text-lg font-medium">Mes listes</a>
-              <a href="/services" className="text-gray-900 hover:text-blue-500 px-3 py-2 rounded-md text-lg font-medium">Services</a>
-              <a href="/contact" className="text-gray-900 hover:text-blue-500 px-3 py-2 rounded-md text-lg font-medium">Contact</a>
+              <Link href="/" className="text-gray-900 hover:text-blue-500 px-3 py-2 rounded-md text-lg font-medium">Home</Link>
+              <Link href="/list" className="text-gray-900 hover:text-blue-500 px-3 py-2 rounded-md text-lg font-medium">Mes listes</Link>
+              <Link href="/articles" className="text-gray-900 hover:text-blue-500 px-3 py-2 rounded-md text-lg font-medium">Articles</Link>
+            
             </div>
           </div>
           <div className="flex items-center">

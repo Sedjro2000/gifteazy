@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { FiX } from 'react-icons/fi'; // For the close button icon
 
+
 interface ShareModalProps {
   listName: string;
   isOpen: boolean;
@@ -25,7 +26,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ listName, isOpen, onClose }) =>
     const shareableLink = `${window.location.origin}/lists/user123/${listName}`;
     navigator.clipboard.writeText(shareableLink);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
+   // setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
   };
 
   return (
@@ -40,19 +41,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ listName, isOpen, onClose }) =>
         <h3 className="text-2xl font-bold text-white mb-8 text-center">
           Share "{listName}"
         </h3>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter email address"
-          className="w-full text-white border-b-2 border-gray-300 focus:outline-none focus:border-indigo-400 transition-all duration-300 p-4 mb-6 bg-transparent rounded-md"
-        />
-        <button
-          onClick={handleShare}
-          className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-full shadow-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 mb-6"
-        >
-          Send Invite
-        </button>
+      
         <div className="mb-6">
           <label className="text-gray-300 mb-3 block text-sm">Share read-only link</label>
           <div className="flex items-center">

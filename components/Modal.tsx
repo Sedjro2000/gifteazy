@@ -49,7 +49,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
-      <div className="bg-yellow-100 bg-opacity-30 backdrop-blur-sm rounded-lg shadow-md w-1/2 flex overflow-hidden p-8">
+      <div className="bg-yellow-100 bg-opacity-30 backdrop-blur-xl rounded-lg shadow-md w-1/2 flex overflow-hidden p-8">
         <div className="flex-1 p-4">
           <img src={item.image} alt={item.name} className="w-full h-96 object-cover rounded-lg" />
           <button className="mt-4 flex items-center justify-center bg-gray-200 text-gray-700 py-2 px-4 rounded-lg">

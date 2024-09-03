@@ -31,7 +31,7 @@ export default function Home() {
   };
 
   return (
-    <div className="font-sans  max-w-screen-2xl mx-auto  py-4 space-y-12">
+    <div className="  p-8 max-w-screen-2xl mx-auto">
       <div className="grid md:grid-cols-2 items-center gap-12">
         <div className="max-md:order-1 text-center md:text-left">
           <h2 className="text-gray-800 lg:text-6xl md:text-5xl text-3xl font-extrabold mb-4 leading-tight">
@@ -43,7 +43,7 @@ export default function Home() {
 
       
 
-          <div className="mt-12 grid sm:grid-cols-3 gap-4 items-center">
+          <div className="mt-12 grid sm:grid-cols-3 gap-4 items-start">
             {[{ icon: FaStar, title: "Exclusif", desc: "Édition Limitée" },
               { icon: FaGift, title: "Choisi avec Soin", desc: "Cadeaux Curatés" },
               { icon: FaHeadphones, title: "Inoubliable", desc: "Moments Mémorables" }].map((item, index) => (
@@ -59,7 +59,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="relative lg:h-[550px] md:h-[550px] flex items-center justify-center">
+        <div className="relative lg:h-[550px] md:h-[550px]  items-center justify-center hidden md:block ">
           <button
             onClick={prevImage}
             className="absolute top-1/2 left-0 transform -translate-y-1/2 z-50 p-2 bg-transparent text-white rounded-full opacity-30 hover:opacity-100 transition-opacity duration-300"
@@ -84,7 +84,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6 z-50 relative mt-12">
+      {/*<div className="grid md:grid-cols-3 gap-6 z-50 relative mt-12">
         {[
           { src: "/cadeau-1.jpg", title: "Cadeau de Luxe", desc: "Un cadeau premium pour des moments inoubliables." },
           { src: "/cadeau-2.jpg", title: "Cadeau Romantique", desc: "Le choix parfait pour célébrer l'amour." },
@@ -104,7 +104,7 @@ export default function Home() {
             </div>
           </div>
         ))}
-      </div>
+      </div>*/}
    
      
     </div>

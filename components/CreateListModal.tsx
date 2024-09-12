@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState } from 'react';
 
 interface CreateListModalProps {
@@ -22,8 +22,8 @@ const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose, onCr
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
-      <div className="bg-white rounded-lg shadow-md p-8 w-1/3">
-        <h2 className="text-2xl font-bold mb-4">Create a new list</h2>
+      <div className="bg-white rounded-lg shadow-md p-8 w-full max-w-md mx-4 sm:mx-auto ">
+        <h2 className="text-2xl font-bold mb-4 text-center sm:text-left">Create a new list</h2>
         <input
           type="text"
           placeholder="List name"

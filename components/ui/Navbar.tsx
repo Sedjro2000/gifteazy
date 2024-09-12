@@ -34,14 +34,15 @@ const Navbar: React.FC = () => {
                   <FaHome className="h-6 w-6" />
                   <span>Home</span>
                 </Link>
-                <Link href="/list" className="text-gray-900 hover:text-blue-500 flex items-center space-x-2">
-                  <FaList className="h-6 w-6" />
-                  <span>Mes listes</span>
-                </Link>
                 <Link href="/articles" className="text-gray-900 hover:text-blue-500 flex items-center space-x-2">
                   <FaBoxOpen className="h-6 w-6" />
                   <span>Articles</span>
                 </Link>
+                <Link href="/list" className="text-gray-900 hover:text-blue-500 flex items-center space-x-2">
+                  <FaList className="h-6 w-6" />
+                  <span>Mes listes</span>
+                </Link>
+             
               </div>
             </div>
             <div className="flex items-center">

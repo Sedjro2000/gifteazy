@@ -44,16 +44,8 @@ export async function GET(req: NextRequest) {
   console.log("Received a request to test MongoDB connection.");
 
   try {
-    // Create a test user
-    const testUser = await prisma.user.create({
-      data: {
-        email: "testuser@example.com",
-        username: "testuser",
-        password: "testpassword",
-      },
-    });
-
-    console.log("✅ User created successfully:", testUser);
+  
+   
 
     return NextResponse.json({ message: "User created successfully", user: testUser }, { status: 200 });
   } catch (error: any) {

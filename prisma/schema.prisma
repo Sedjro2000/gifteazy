@@ -3,24 +3,124 @@
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
-
-// Définir le fournisseur MongoDB
 datasource db {
   provider = "mongodb"
-  url      = env("DATABASE_URL") // Chaîne de connexion à la base de données
+  url      = env("DATABASE_URL")
 }
 
-// Définir un modèle simple pour tester
 model User {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId // Utilisation du type ObjectId pour MongoDB
-  email    String   @unique
-  username String   @unique
-  password String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String    @unique
+  password  String
+  role      Role
+  createdAt DateTime  @default(now())
+
+  // Relations
+  lists     List[]
+  donations Order[]
+  merchant  Merchant?  // Relation inverse vers Merchant (un utilisateur peut être un marchand)
+}
+
+
+model Merchant {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String    @unique @db.ObjectId // userId doit être unique pour assurer une relation un-à-un
+  storeName String    @unique
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id])
+  products  Product[]
+}
+
+
+model Product {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  merchantId  String    @db.ObjectId
+  name        String
+  description String
+  price       Float
+  imageUrl    String
+  stock       Int
+  createdAt   DateTime  @default(now())
+
+  // Relations
+  merchant    Merchant  @relation(fields: [merchantId], references: [id])
+  listItems   ListItem[]
+}
+
+model List {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String    @db.ObjectId
+  title     String
+  createdAt DateTime  @default(now())
+  isShared  Boolean   @default(false)
+  shareUrl  String?
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id])
+  listItems ListItem[]
+}
+
+model ListItem {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  listId    String    @db.ObjectId
+  productId String    @db.ObjectId
+  quantity  Int
+  isGifted  Boolean   @default(false)
+
+  // Relations
+  list      List      @relation(fields: [listId], references: [id])
+  product   Product   @relation(fields: [productId], references: [id])
+  orderListItems OrderListItem[] // Relation explicite via la table de jointure
+}
+
+model Order {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  donatorId     String    @db.ObjectId
+  amount        Float
+  paymentStatus PaymentStatus
+  deliveryStatus DeliveryStatus
+  createdAt     DateTime  @default(now())
+
+  // Relations
+  donator    User      @relation(fields: [donatorId], references: [id])
+  orderListItems OrderListItem[]  // Relation explicite via la table de jointure
+
+
+}
+
+// Modèle de jointure pour la relation many-to-many entre Order et ListItem
+model OrderListItem {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  orderId    String    @db.ObjectId
+  listItemId String    @db.ObjectId
+
+  // Relations
+  order      Order     @relation(fields: [orderId], references: [id])
+  listItem   ListItem  @relation(fields: [listItemId], references: [id])
+}
+
+
+enum Role {
+  ADMIN
+  MERCHANT
+  CLIENT
+  DONATEUR
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum DeliveryStatus {
+  PENDING
+  SHIPPED
+  DELIVERED
 }

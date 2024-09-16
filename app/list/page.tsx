@@ -4,12 +4,14 @@ import { useLists } from '../../context/ListsContext';
 import { FaShareAlt, FaTrash, FaEye, FaPlus } from 'react-icons/fa';
 import CreateListModal from '@/components/CreateListModal';
 import ListViewModal from '@/components/ListViewModal';
-import ShareModal from '@/components/ShareModal' // Assure-toi d'importer ce modal
+import ShareModal from '@/components/ShareModal';
 
 const ListsPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isListViewModalOpen, setIsListViewModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false); // État pour le modal de partage
   const [selectedList, setSelectedList] = useState<any>(null); // Pour stocker la liste sélectionnée
+  const [listToShare, setListToShare] = useState<string | null>(null); // Pour stocker la liste à partager
   const { lists, addList, deleteList } = useLists();
 
   const handleCreateList = (listName: string) => {
@@ -21,7 +23,8 @@ const ListsPage: React.FC = () => {
   };
 
   const handleShareList = (listName: string) => {
-    // Handle share list logic
+    setListToShare(listName); // Enregistre le nom de la liste à partager
+    setIsShareModalOpen(true); // Ouvre le modal
   };
 
   const openModal = () => setIsModalOpen(true);
@@ -78,7 +81,7 @@ const ListsPage: React.FC = () => {
                       <span>Delete</span>
                     </button>
                     <button
-                      onClick={() => handleShareList(list.name)}
+                      onClick={() => handleShareList(list.name)} // Ouvre le modal de partage
                       className="text-gray-700 hover:text-gray-500 flex items-center space-x-2"
                     >
                       <FaShareAlt size={20} />
@@ -108,6 +111,13 @@ const ListsPage: React.FC = () => {
           onClose={() => setIsListViewModalOpen(false)}
         />
       )}
+
+      {/* Modal de partage */}
+      <ShareModal
+        listName={listToShare || ''} // Passe la liste à partager
+        isOpen={isShareModalOpen}    // Contrôle l'ouverture du modal
+        onClose={() => setIsShareModalOpen(false)} // Ferme le modal lorsqu'on clique sur "Cancel"
+      />
     </div>
   );
 };

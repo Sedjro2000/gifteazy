@@ -45,7 +45,7 @@ const LoginRegisterModal: React.FC<LoginRegisterModalProps> = ({ isOpen, onClose
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500/70 hover:bg-blue-600/80 text-white font-bold py-2 px-4 rounded-md"
+            className="w-full bg-black/70 hover:bg-black/80 text-white font-bold py-2 px-4 rounded-md"
           >
             Login
           </button>

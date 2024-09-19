@@ -1,4 +1,4 @@
-'use client';
+'use client'
 import React, { useState } from 'react';
 import { useLists } from '../../context/ListsContext';
 import { FaShareAlt, FaTrash, FaEye, FaPlus } from 'react-icons/fa';
@@ -6,12 +6,22 @@ import CreateListModal from '@/components/CreateListModal';
 import ListViewModal from '@/components/ListViewModal';
 import ShareModal from '@/components/ShareModal';
 
+const demoProducts = [
+  { id: 1, name: 'Produit A', price: 29.99, description: 'Description du produit A' },
+  { id: 2, name: 'Produit B', price: 49.99, description: 'Description du produit B' },
+  { id: 3, name: 'Produit C', price: 19.99, description: 'Description du produit C' },
+  { id: 1, name: 'Produit A', price: 29.99, description: 'Description du produit A' },
+  { id: 2, name: 'Produit B', price: 49.99, description: 'Description du produit B' },
+  { id: 3, name: 'Produit C', price: 19.99, description: 'Description du produit C' },
+  { id: 3, name: 'Produit C', price: 19.99, description: 'Description du produit C' },
+];
+
 const ListsPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isListViewModalOpen, setIsListViewModalOpen] = useState(false);
-  const [isShareModalOpen, setIsShareModalOpen] = useState(false); // État pour le modal de partage
-  const [selectedList, setSelectedList] = useState<any>(null); // Pour stocker la liste sélectionnée
-  const [listToShare, setListToShare] = useState<string | null>(null); // Pour stocker la liste à partager
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [selectedList, setSelectedList] = useState<any>(null);
+  const [listToShare, setListToShare] = useState<string | null>(null);
   const { lists, addList, deleteList } = useLists();
 
   const handleCreateList = (listName: string) => {
@@ -23,17 +33,21 @@ const ListsPage: React.FC = () => {
   };
 
   const handleShareList = (listName: string) => {
-    setListToShare(listName); // Enregistre le nom de la liste à partager
-    setIsShareModalOpen(true); // Ouvre le modal
+    setListToShare(listName);
+    setIsShareModalOpen(true);
   };
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  // Fonction pour ouvrir le modal de visualisation de la liste
   const handleViewList = (list: any) => {
-    setSelectedList(list); // Sélectionne la liste
-    setIsListViewModalOpen(true); // Ouvre le modal de visualisation
+    // Ajouter les produits fictifs à la liste pour la démonstration
+    const listWithItems = {
+      ...list,
+      items: demoProducts,
+    };
+    setSelectedList(listWithItems);
+    setIsListViewModalOpen(true);
   };
 
   return (
@@ -63,11 +77,11 @@ const ListsPage: React.FC = () => {
                 <div className="flex flex-col justify-between h-full">
                   <div className="mb-4">
                     <h3 className="text-xl font-bold text-gray-900 mb-2">{list.name}</h3>
-                    <p className="text-sm text-gray-500">Total Items: {list.items.length}</p>
+                    <p className="text-sm text-gray-500">Total Items: {demoProducts.length}</p>
                   </div>
                   <div className="flex justify-between items-center mt-auto">
                     <button
-                      onClick={() => handleViewList(list)} // Ouvre le modal de vue
+                      onClick={() => handleViewList(list)}
                       className="text-gray-700 hover:text-gray-500 flex items-center space-x-2"
                     >
                       <FaEye size={20} />
@@ -81,7 +95,7 @@ const ListsPage: React.FC = () => {
                       <span>Delete</span>
                     </button>
                     <button
-                      onClick={() => handleShareList(list.name)} // Ouvre le modal de partage
+                      onClick={() => handleShareList(list.name)}
                       className="text-gray-700 hover:text-gray-500 flex items-center space-x-2"
                     >
                       <FaShareAlt size={20} />
@@ -114,9 +128,9 @@ const ListsPage: React.FC = () => {
 
       {/* Modal de partage */}
       <ShareModal
-        listName={listToShare || ''} // Passe la liste à partager
-        isOpen={isShareModalOpen}    // Contrôle l'ouverture du modal
-        onClose={() => setIsShareModalOpen(false)} // Ferme le modal lorsqu'on clique sur "Cancel"
+        listName={listToShare || ''}
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
       />
     </div>
   );

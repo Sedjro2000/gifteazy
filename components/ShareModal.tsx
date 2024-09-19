@@ -23,7 +23,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ listName, isOpen, onClose }) =>
 
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60 backdrop-blur-sm z-50 transition-opacity duration-300">
-      <div className="relative bg-white bg-opacity-20 backdrop-blur-md p-8 rounded-3xl shadow-2xl w-full max-w-lg mx-4 md:mx-0 border border-gray-200 border-opacity-40">
+      <div className="relative  p-8 rounded-3xl shadow-2xl w-full max-w-lg mx-4 md:mx-0 bg-transparent border-opacity-40">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-white text-2xl hover:text-gray-300 transition-colors duration-300"

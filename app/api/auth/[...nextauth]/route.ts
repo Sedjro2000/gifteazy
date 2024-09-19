@@ -1,3 +1,70 @@
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     AuthOptions:
+ *       type: object
+ *       properties:
+ *         adapter:
+ *           type: string
+ *           description: Adapter for Prisma integration.
+ *         providers:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: Authentication providers (e.g., Credentials, Google).
+ *         pages:
+ *           type: object
+ *           description: Custom sign-in page.
+ *         session:
+ *           type: object
+ *           description: Session strategy.
+ *         callbacks:
+ *           type: object
+ *           description: Custom callback functions for JWT and sessions.
+ */
+
+/**
+ * @swagger
+ * /api/auth/callback/credentials:
+ *   post:
+ *     summary: Authenticate user credentials.
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "you@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "yourpassword"
+ *     responses:
+ *       200:
+ *         description: Successful authentication
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized (invalid credentials)
+ */
+
+
+
+
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';

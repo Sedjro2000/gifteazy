@@ -112,7 +112,7 @@ export const authOptions = {
         signIn: "/auht/signin",
     },
     session : {
-        strategy : 'jwt ' as 'jwt',
+        strategy : 'jwt ' as 'jwt', //ici on peut avoir autre stratgie
     },
     
     callbacks : {

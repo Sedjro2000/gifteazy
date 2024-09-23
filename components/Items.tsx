@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image'; // Import du composant Image
 import Modal from './Modal';
 
 type Item = {
@@ -102,7 +103,15 @@ const Items: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filteredItems.map((item, index) => (
           <div key={index} className="border rounded-lg overflow-hidden shadow-lg">
-            <img src={item.image} alt={item.name} className="w-full h-48 object-cover" />
+            <div className="relative w-full h-48">
+              <Image 
+                src={item.image} 
+                alt={item.name} 
+                layout="fill" 
+                objectFit="cover" 
+                className="rounded-lg" 
+              />
+            </div>
             <div className="p-4">
               <h3 className="text-lg font-semibold">{item.name}</h3>
               <p className="text-gray-600">{item.price}</p>

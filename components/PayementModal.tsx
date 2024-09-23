@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaTimes, FaCreditCard, FaMobileAlt } from 'react-icons/fa';
+import Image from 'next/image'; // Import the Next.js Image component
 
 interface Item {
   id: number;
@@ -29,7 +30,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ item, onClose, onConfirm })
     <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-lg w-full max-w-lg mx-auto lg:max-w-5xl lg:h-auto lg:overflow-visible max-h-[90vh] lg:max-h-full overflow-y-auto">
         <div className="flex justify-between items-center border-b px-4 py-2 sticky top-0 bg-white lg:relative">
-          <h2 className="text-xl font-semibold text-gray-800">Confirmer l'achat</h2>
+          <h2 className="text-xl font-semibold text-gray-800">Confirmer l&apos;achat</h2>
+          {/* Used &apos; for the apostrophe */}
           <button onClick={onClose} className="text-gray-600 hover:text-gray-800">
             <FaTimes size={20} />
           </button>
@@ -70,7 +72,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ item, onClose, onConfirm })
                 <div className="flex space-x-2">
                   <input
                     type="text"
-                    placeholder="Date d'expiration"
+                    placeholder="Date d&apos;expiration" // Used &apos; for the apostrophe
                     className="w-1/2 mb-3 p-2 border rounded-lg"
                   />
                   <input
@@ -129,10 +131,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ item, onClose, onConfirm })
           <div className="lg:w-1/3 bg-gray-100 p-4 rounded-lg mt-6 lg:mt-0">
             <h3 className="text-lg font-semibold mb-4">Résumé de la commande</h3>
             <div className="flex mb-4">
-              <img
+              {/* Replaced <img> with Next.js <Image> component */}
+              <Image
                 src={item.image}
                 alt={item.name}
-                className="w-20 h-20 object-cover rounded-lg mr-4"
+                width={80}  // Specifying width and height as required by next/image
+                height={80} // You may adjust these values as needed
+                className="object-cover rounded-lg mr-4"
               />
               <div className="text-gray-700">
                 <h4 className="text-sm font-semibold">{item.name}</h4>

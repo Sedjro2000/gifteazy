@@ -1,11 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 interface Product {
   id: number;
   name: string;
   price: number;
   description: string;
+  image: string
 }
 
 interface ListViewModalProps {
@@ -15,6 +17,7 @@ interface ListViewModalProps {
 }
 
 const ListViewModal: React.FC<ListViewModalProps> = ({ isOpen, list, onClose }) => {
+  console.log("contenu de la liste", list.items)
   if (!isOpen) return null;
 
   return (
@@ -46,8 +49,9 @@ const ListViewModal: React.FC<ListViewModalProps> = ({ isOpen, list, onClose }) 
               className="bg-white bg-opacity-70 dark:bg-gray-800 dark:bg-opacity-50 p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
             >
               <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">{item.name}</h3>
-              <p className="text-gray-600 dark:text-gray-300">{item.description}</p>
-              <p className="mt-2 text-blue-600 dark:text-blue-400 font-semibold">${item.price.toFixed(2)}</p>
+           
+              <p className="mt-2 text-blue-600 dark:text-blue-400 font-semibold">${item.price}</p>
+              <Image  src={item.image} alt='item' width={50} height={50}/>
             </div>
           ))}
         </div>

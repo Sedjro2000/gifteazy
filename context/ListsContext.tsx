@@ -57,7 +57,7 @@ export const ListProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setLists(prevLists => {
       const updatedLists = prevLists.map(list => {
         if (list.id === listId) {
-          const updatedItems = [...list.items, { ...item, id: generateUniqueId() }]; // Ajoute un ID unique ici
+          const updatedItems = [...list.items, { ...item, id: generateUniqueId() }];
           return { ...list, items: updatedItems };
         }
         return list;

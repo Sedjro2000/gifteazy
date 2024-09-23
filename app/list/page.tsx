@@ -41,12 +41,15 @@ const ListsPage: React.FC = () => {
   const closeModal = () => setIsModalOpen(false);
 
   const handleViewList = (list: any) => {
+    console.log("voici la liste ",list)
     // Ajouter les produits fictifs à la liste pour la démonstration
     const listWithItems = {
       ...list,
-      items: demoProducts,
+      items: lists,
+      
     };
-    setSelectedList(listWithItems);
+    setSelectedList(list);
+    console.log("voici la liste qui a été selectionné",list)
     setIsListViewModalOpen(true);
   };
 

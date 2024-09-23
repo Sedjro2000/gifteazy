@@ -6,6 +6,7 @@ import Navbar from "../components/ui/Navbar";
 import Footer from "../components/ui/Footer"; 
 import { ListProvider } from "../context/ListsContext"; 
 import { usePathname } from "next/navigation";
+import { SessionProvider } from "next-auth/react";
 import { metadata } from "@/metadata";
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,15 +22,19 @@ export default function RootLayout({
   const excludedPaths = ["/signin"];
 
   const hideNavbarAndFooter = excludedPaths.includes(pathname);
-
+ 
   return (
     <html lang="en">
       <body className={inter.className}>
+        <SessionProvider>
         {!hideNavbarAndFooter && <Navbar />}
         <ListProvider>
           {children}
         </ListProvider>
         {!hideNavbarAndFooter && <Footer />} 
+        </SessionProvider>
+       
+
       </body>
     </html>
   );

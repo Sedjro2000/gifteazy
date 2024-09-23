@@ -17,10 +17,10 @@ export default function About() {
               Notre Mission
             </h3>
             <p className="text-gray-700 leading-relaxed mb-8 text-lg">
-              Chez <span className="font-bold text-gray-900">Gift</span>, nous croyons que chaque moment mérite d'être célébré avec un cadeau spécial. Notre mission est de rendre ces moments inoubliables en vous offrant une sélection soigneusement choisie de cadeaux pour toutes les occasions. Que ce soit pour un anniversaire, une fête ou une simple surprise, nous avons quelque chose de parfait pour chaque personne et chaque événement.
+              Chez <span className="font-bold text-gray-900">Gift</span>, nous croyons que chaque moment mérite d&apos;être célébré avec un cadeau spécial. Notre mission est de rendre ces moments inoubliables en vous offrant une sélection soigneusement choisie de cadeaux pour toutes les occasions. Que ce soit pour un anniversaire, une fête ou une simple surprise, nous avons quelque chose de parfait pour chaque personne et chaque événement.
             </p>
             <p className="text-gray-700 leading-relaxed text-lg">
-              Nous nous engageons à offrir une expérience d'achat exceptionnelle avec une attention particulière aux détails, un service client de premier ordre, et une passion pour apporter de la joie à chaque occasion.
+              Nous nous engageons à offrir une expérience d&apos;achat exceptionnelle avec une attention particulière aux détails, un service client de premier ordre, et une passion pour apporter de la joie à chaque occasion.
             </p>
           </div>
 

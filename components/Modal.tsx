@@ -1,7 +1,9 @@
-'use client'
+'use client';
 import React, { useState, useEffect } from 'react';
 import { useLists } from '../context/ListsContext';
 import { FiX } from 'react-icons/fi';
+import Image from 'next/image'; 
+import { v4 as uuidv4 } from 'uuid';
 
 interface ModalProps {
   isOpen: boolean;
@@ -25,33 +27,41 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
   const handleAddToList = () => {
     if (newListName) {
       console.log('Creating new list with name:', newListName);
-      addList(newListName); // Create a new list if name is provided
+      addList(newListName); // Create a new list if the name is provided
       console.log('List created:', newListName);
       setNewListName(''); // Clear the input field
     } else if (selectedListId) {
       const itemToAdd = {
+        id: uuidv4(), // Generate a unique ID for the item
         name: item?.name ?? '',
         price: item?.price ?? '',
         image: item?.image ?? '',
       };
+  
       console.log('Adding item to existing list:', selectedListId);
       console.log('Item details:', itemToAdd);
-      
-      addItemToList(selectedListId, itemToAdd); // Use the list ID to add the item
+  
+      addItemToList(selectedListId, itemToAdd); // Add the item with an ID to the list
       console.log('Item added to list:', selectedListId, itemToAdd);
       onClose(); // Close the modal after adding the item
     } else {
       console.log('No list selected or new list name provided.');
     }
   };
-
   if (!isOpen || !item) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
       <div className="bg-yellow-100 bg-opacity-30 backdrop-blur-xl rounded-lg shadow-md w-1/2 flex overflow-hidden p-8">
         <div className="flex-1 p-4">
-          <img src={item.image} alt={item.name} className="w-full h-96 object-cover rounded-lg" />
+          {/* Step 2 & 3: Replace img with Image */}
+          <Image 
+            src={item.image} 
+            alt={item.name} 
+            width={500} // Adjust width as needed
+            height={400} // Adjust height as needed
+            className="w-full h-96 object-cover rounded-lg"
+          />
           <button className="mt-4 flex items-center justify-center bg-gray-200 text-gray-700 py-2 px-4 rounded-lg">
             Preview in your space
           </button>
@@ -63,7 +73,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
           </div>
           <p className="text-yellow-300 mb-2">Coffee table, concrete, 90 cm</p>
           <p className="text-sm text-white mb-4">
-            An organic shape and smooth finish of this concrete coffee table reflect nature's elegance. Made from lightweight, reinforced glass fibre concrete, it seamlessly blends durability with style.
+            An organic shape and smooth finish of this concrete coffee table reflect nature&apos;s elegance. Made from lightweight, reinforced glass fibre concrete, it seamlessly blends durability with style.
           </p>
           <div className="mb-4">
             <span className="text-sm">Article Number: 903.031.06</span>

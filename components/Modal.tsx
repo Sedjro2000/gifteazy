@@ -4,6 +4,9 @@ import { useLists } from '../context/ListsContext';
 import { FiX } from 'react-icons/fi';
 import Image from 'next/image'; 
 import { v4 as uuidv4 } from 'uuid';
+import {  useSession } from "next-auth/react";
+import { useRouter } from 'next/navigation';
+
 
 interface ModalProps {
   isOpen: boolean;
@@ -15,7 +18,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
   const { lists, addList, addItemToList } = useLists();
   const [selectedListId, setSelectedListId] = useState<string>('');
   const [newListName, setNewListName] = useState<string>('');
-
+  const { data: session, status } = useSession();
+  const router = useRouter()
+ 
   useEffect(() => {
     if (isOpen) {
       // Reset the form when modal opens
@@ -24,7 +29,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
     }
   }, [isOpen]);
 
-  const handleAddToList = () => {
+  const handleAddToList = (e: { preventDefault: () => void; }) => {
+    if (!session) {
+      e.preventDefault(); 
+      router.push('/signin')
+    }
     if (newListName) {
       console.log('Creating new list with name:', newListName);
       addList(newListName); // Create a new list if the name is provided

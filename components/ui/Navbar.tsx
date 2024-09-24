@@ -5,7 +5,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import LoginRegisterModal from '@/components/LoginRegisterModal';
 import { signOut, useSession } from "next-auth/react";
-
+import Loading from './loading';
+import { useRouter } from 'next/navigation';
+import { FaSignOutAlt } from 'react-icons/fa';
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,14 +31,18 @@ const Navbar: React.FC = () => {
 
 
   const { data: session, status } = useSession();
+  const router = useRouter()
 
   useEffect(() => {
     console.log("Session data: ", session);
     console.log("Session status: ", status);
   }, [session, status]);
 
-  if (status === "loading") {
+ /* if (status === "loading") {
     return <p>Loading...</p>;
+}*/
+if (status ==="loading"){
+  return <Loading />
 }
 
 if (status === "authenticated") {
@@ -45,6 +51,15 @@ if (status === "authenticated") {
     console.log("User is not authenticated.");
 }
 console.log(session?.user?.name)
+
+const handleLinkClick = (e: { preventDefault: () => void; }) => {
+  if (!session) {
+    e.preventDefault(); 
+    router.push('/signin')
+  }
+};
+
+
 
   return (
     <>
@@ -64,7 +79,9 @@ console.log(session?.user?.name)
                   <FaBoxOpen className="h-6 w-6" />
                   <span>Articles</span>
                 </Link>
-                <Link href="/list" className="text-gray-900 hover:text-blue-500 flex items-center space-x-2">
+
+                
+                <Link href="/list" className="text-gray-900 hover:text-blue-500 flex items-center space-x-2 " onClick={handleLinkClick}>
                   <FaList className="h-6 w-6" />
                   <span>Mes listes</span>
                 </Link>
@@ -73,14 +90,14 @@ console.log(session?.user?.name)
             <div className="flex items-center">
               {session ? (
                
-                <button
-                  onClick={handleLogout}
-                  className="bg-white p-2 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  <span className="sr-only">Logout</span>
-                  <FaUserCircle className="h-8 w-8" aria-hidden="true" />
-                  <span>Logout</span>
-                </button>
+               <button
+               onClick={handleLogout}
+               className="bg-white p-2 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 hidden md:flex"
+             >
+               <span className="sr-only">Logout</span>
+               <FaSignOutAlt className="h-8 w-8" aria-hidden="true" />
+               <span>Logout</span>
+             </button>
               ) : (
                 
               <h1>non connecté</h1>
@@ -106,22 +123,30 @@ console.log(session?.user?.name)
             </button>
           </div>
           <div className="flex flex-col items-center space-y-6 mt-10">
-            <a href="/" className="text-gray-900 hover:text-blue-500 flex items-center space-x-2">
-              <FaHome className="h-6 w-6" />
-              <span>Home</span>
-            </a>
-            <a href="/list" className="text-gray-900 hover:text-blue-500 flex items-center space-x-2">
-              <FaList className="h-6 w-6" />
-              <span>Mes Listes</span>
-            </a>
-            <a href="/articles" className="text-gray-900 hover:text-blue-500 flex items-center space-x-2">
-              <FaBoxOpen className="h-6 w-6" />
-              <span>Articles</span>
-            </a>
-            <a href="/contact" className="text-gray-900 hover:text-blue-500 flex items-center space-x-2">
-              <FaUserCircle className="h-6 w-6" />
-              <span>Contact</span>
-            </a>
+          <Link href="/" className="text-gray-900 hover:text-blue-500 flex items-center space-x-2">
+  <FaHome className="h-6 w-6" />
+  <span>Home</span>
+</Link>
+<Link href="/articles" className="text-gray-900 hover:text-blue-500 flex items-center space-x-2">
+  <FaBoxOpen className="h-6 w-6" />
+  <span>Articles</span>
+</Link>
+<Link href="/list" className="text-gray-900 hover:text-blue-500 flex items-center space-x-2">
+  <FaList className="h-6 w-6" />
+  <span>Mes Listes</span>
+</Link>
+<Link href="/contact" className="text-gray-900 hover:text-blue-500 flex items-center space-x-2">
+  <FaUserCircle className="h-6 w-6" />
+  <span>Contact</span>
+</Link>
+<button
+               onClick={handleLogout}
+               className="text-gray-900 hover:text-blue-500 flex items-center space-x-2"
+             >
+               <span className="sr-only">Logout</span>
+               <FaSignOutAlt className="h-8 w-8" aria-hidden="true" />
+               <span>Logout</span>
+             </button>
           </div>
         </div>
       </nav>

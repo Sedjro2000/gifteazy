@@ -43,7 +43,7 @@ export const ListProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const addList = (name: string) => {
     setLists(prevLists => {
-      const newList = {
+      const newList: List = {
         id: generateUniqueId(),
         name: name,
         items: [],
@@ -65,6 +65,7 @@ export const ListProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return updatedLists;
     });
   };
+
   const deleteList = (listId: string) => {
     setLists(prevLists => {
       console.log('Current lists before deletion:', JSON.stringify(prevLists, null, 2));

@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image'; // Import du composant Image
+import Image from 'next/image'; 
 import Modal from './Modal';
 
 type Item = {
@@ -20,7 +20,7 @@ const thematicCategories = [
   'Weddings',
 ];
 
-// 30 items with random categories
+
 const items: Item[] = [
   { name: 'Gift Box', price: '$50', image: '/item0.jpg', category: 'Birthdays' },
   { name: 'Valentine\'s Roses', price: '$30', image: '/item1.jpg', category: 'Valentine\'s Day' },

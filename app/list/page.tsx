@@ -80,7 +80,7 @@ const ListsPage: React.FC = () => {
                 <div className="flex flex-col justify-between h-full">
                   <div className="mb-4">
                     <h3 className="text-xl font-bold text-gray-900 mb-2">{list.name}</h3>
-                    <p className="text-sm text-gray-500">Total Items: {demoProducts.length}</p>
+                    <p className="text-sm text-gray-500">Total Items: {list.items.length}</p>
                   </div>
                   <div className="flex justify-between items-center mt-auto">
                     <button

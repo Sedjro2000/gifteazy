@@ -14,13 +14,13 @@ const Auth = () => {
     const toggleSignUp = (): void => setIsSignUp(prev => !prev);
     const router = useRouter();
 
-    // Gérer login ou signup en fonction de l'état du formulaire
+    
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (isSignUp) {
             if (password !== confirmPassword) {
-                alert("Les mots de passe ne sont pas identiques");
+               
                 return;
             }
 
@@ -37,13 +37,12 @@ const Auth = () => {
             });
 
             if (res.ok) {
-                alert("Vous êtes inscrit avec succès");
-                // Après création, login automatiquement
+               
                 await signIn("credentials", { email, password, redirect: false });
                 router.push("/");
             } else {
                 const errorData = await res.json();
-                alert(errorData.error || "Échec de création de compte");
+                //alert(errorData.error || "Échec de création de compte");
             }
         } else {
             const res = await signIn("credentials", {
@@ -53,7 +52,7 @@ const Auth = () => {
             });
             console.log(res)
             if (res?.error) {
-                alert(res.error);
+                //alert(res.error);
             } else {
                 router.push("/");
             }

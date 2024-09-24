@@ -7,11 +7,10 @@ import LoginRegisterModal from '@/components/LoginRegisterModal';
 import { signOut, useSession } from "next-auth/react";
 import Loading from './loading';
 import { useRouter } from 'next/navigation';
-import { FaSignOutAlt } from 'react-icons/fa';
+import { FaSignOutAlt, FaSignInAlt } from 'react-icons/fa';
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -25,9 +24,11 @@ const Navbar: React.FC = () => {
   };
 
   const handleLogout = () => {
-    signOut({ callbackUrl: "/signin" });
+    signOut({ callbackUrl: "/" });
   };
-
+  const handleLogin = ()=> {
+    router.push('/signin')
+  }
 
 
   const { data: session, status } = useSession();
@@ -88,20 +89,21 @@ const handleLinkClick = (e: { preventDefault: () => void; }) => {
               </div>
             </div>
             <div className="flex items-center">
-              {session ? (
-               
-               <button
-               onClick={handleLogout}
-               className="bg-white p-2 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 hidden md:flex"
-             >
-               <span className="sr-only">Logout</span>
-               <FaSignOutAlt className="h-8 w-8" aria-hidden="true" />
-               <span>Logout</span>
-             </button>
-              ) : (
-                
-              <h1>non connecté</h1>
-              )}
+            {session ? (
+  <button
+    onClick={handleLogout}
+    className="bg-white p-2 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 hidden md:flex"
+  >
+    <span className="sr-only">Logout</span>
+    <FaSignOutAlt className="h-8 w-8" aria-hidden="true" />
+    <span>Logout</span>
+  </button>
+) : (
+  <button className="flex items-center" onClick={handleLogin}>
+    <FaSignInAlt className="h-8 w-8 text-gray-400 mr-2" aria-hidden="true" />
+    <h1 className='text-gray-900 hover:text-blue-500'>Se connecter</h1>
+  </button>
+)}
               <button
                 onClick={toggleMenu}
                 className="ml-4 md:hidden p-2 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"

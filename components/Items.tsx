@@ -1,70 +1,86 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image'; 
 import Modal from './Modal';
+import FilterSidebar from '@/components/Filter';
 
 type Item = {
   name: string;
   price: string;
-  image: string;
+  imageUrl: string;
   category: string;
 };
 
-const thematicCategories = [
-  'All',
-  'Birthdays',
-  'Valentine\'s Day',
-  'New Year\'s Eve',
-  'Christmas',
-  'Weddings',
-];
+type PriceRange = {
+  min: string;
+  max: string;
+};
 
-
-const items: Item[] = [
-  { name: 'Gift Box', price: '$50', image: '/item0.jpg', category: 'Birthdays' },
-  { name: 'Valentine\'s Roses', price: '$30', image: '/gift1.jpg', category: 'Valentine\'s Day' },
-  { name: 'Birthday Cake', price: '$30', image: '/cake.jpg', category: 'Birthdays' },
-  { name: 'Bmw', price: '$20', image: '/item3.png', category: 'Valentine\'s Day' },
-  { name: 'Mèche Brésilienne', price: '$100', image: '/item0.jpg', category: 'New Year\'s Eve' },
-  { name: 'Valentine Chocolate', price: '$150', image: '/item1.jpg', category: 'Christmas' },
-  { name: 'Wedding Ring', price: '$500', image: '/wedding.jpg', category: 'Weddings' },
-  { name: 'Santa Hat', price: '$10', image: '/xmas.jpg', category: 'Christmas' },
-  { name: 'Vin ', price: '$50', image: '/wine.png', category: 'Christmas' },
-  { name: 'Cake', price: '$2000', image: '/cake.jpg', category: 'Weddings' },
-  { name: 'Party Poppers', price: '$5', image: '/item5.png', category: 'New Year\'s Eve' },
-  { name: 'Party Hats', price: '$5', image: '/item4.png', category: 'Birthdays' },
-  { name: 'Balloons', price: '$8', image: '/gift1.jpg', category: 'Birthdays' },
-  { name: 'Valentine\'s Card', price: '$5', image: '/gift0.jpg', category: 'Valentine\'s Day' },
-  { name: 'Birthday Candles', price: '$10', image: '/item3.png', category: 'Birthdays' },
-  { name: 'Christmas Ornaments', price: '$30', image: '/item0.jpg', category: 'Christmas' },
-  { name: 'Wedding Cake', price: '$300', image: '/cake.jpg', category: 'Weddings' },
-  { name: 'Birthday Invitation', price: '$20', image: '/gift3d.jpg', category: 'Birthdays' },
-  { name: 'Valentine\'s Necklace', price: '$100', image: '/item1.jpg', category: 'Valentine\'s Day' },
-  { name: 'Fireworks', price: '$200', image: '/item4.png', category: 'New Year\'s Eve' },
-  { name: 'Wedding Bouquet', price: '$200', image: '/gift3d.jpg', category: 'Weddings' },
-  { name: 'Christmas Stocking', price: '$25', image: '/xmas.jpg', category: 'Christmas' },
-  { name: 'Party Streamers', price: '$5', image: '/item0.jpg', category: 'New Year\'s Eve' },
-  { name: 'Wedding Invitation', price: '$50', image: '/item3.png', category: 'Weddings' },
-  { name: 'Christmas Cookies', price: '$15', image: '/gift0.jpg', category: 'Christmas' },
-  { name: 'Valentine\'s Gift', price: '$50', image: '/gift1.jpg', category: 'Valentine\'s Day' },
-  { name: 'New Year\'s Eve Dress', price: '$150', image: '/item4.png', category: 'New Year\'s Eve' },
-  { name: 'Santa Suit', price: '$100', image: '/xmas.jpg', category: 'Christmas' },
-  { name: 'Birthday Pinata', price: '$30', image: '/gift3d.jpg', category: 'Birthdays' },
-  { name: 'Wedding Veil', price: '$150', image: '/item5.png', category: 'Weddings' },
-];
-
-
-const Items: React.FC = () => {
+const ProductPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [items, setItems] = useState<Item[]>([]); // Tous les produits
+  const [filteredItems, setFilteredItems] = useState<Item[]>([]); // Produits filtrés
+  const [loading, setLoading] = useState(true); // Indicateur de chargement
+  const [error, setError] = useState<string | null>(null); // Gérer les erreurs
+  const [filters, setFilters] = useState<Record<string, any>>({});
+  const [priceRange, setPriceRange] = useState<PriceRange>({ min: '', max: '' });
+
   const router = useRouter();
 
   const isMobile = () => window.innerWidth <= 768;
 
+  // Utilisation de useEffect pour récupérer les produits
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/products/all');
+        if (!response.ok) {
+          throw new Error('Erreur lors de la récupération des produits');
+        }
+        const data = await response.json();
+        setItems(data); // Mise à jour de la liste des items
+        setFilteredItems(data); // Initialisation des items filtrés
+        setLoading(false); // Désactivation de l'état de chargement
+      } catch (err) {
+        setError((err as Error).message);
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []); // Dépendance vide pour exécuter la fonction uniquement au montage du composant
+
+  // Filtrer les produits en fonction des filtres appliqués
+  const applyFilters = (updatedFilters: Record<string, any>, updatedPriceRange: PriceRange) => {
+    let filtered = items;
+
+    // Filtrer par catégorie ou autres filtres
+    Object.keys(updatedFilters).forEach((key) => {
+      if (updatedFilters[key]) {
+        filtered = filtered.filter((item) => item.category === updatedFilters[key]);
+      }
+    });
+
+    // Filtrer par plage de prix
+    if (updatedPriceRange.min) {
+      filtered = filtered.filter((item) => parseFloat(item.price) >= parseFloat(updatedPriceRange.min));
+    }
+    if (updatedPriceRange.max) {
+      filtered = filtered.filter((item) => parseFloat(item.price) <= parseFloat(updatedPriceRange.max));
+    }
+
+    setFilteredItems(filtered); // Mettre à jour la liste des items filtrés
+  };
+
+  // Gérer les filtres appliqués et la plage de prix dans FilterSidebar
+  const handleFilterChange = (updatedFilters: Record<string, any>, updatedPriceRange: PriceRange) => {
+    setFilters(updatedFilters);
+    setPriceRange(updatedPriceRange);
+    applyFilters(updatedFilters, updatedPriceRange);
+  };
+
   const handleItemClick = (item: Item) => {
-    console.log('Item clicked:', item);
     if (isMobile()) {
       router.push(`/product/${item.name}`);
     } else {
@@ -74,64 +90,58 @@ const Items: React.FC = () => {
   };
 
   const closeModal = () => {
-    console.log('Modal closed');
     setIsModalOpen(false);
     setSelectedItem(null);
   };
 
-  const filteredItems = selectedCategory === 'All'
-    ? items
-    : items.filter(item => item.category === selectedCategory);
+  if (loading) {
+    return <p>Chargement des produits...</p>;
+  }
+
+  if (error) {
+    return <p>Erreur : {error}</p>;
+  }
 
   return (
-    <div className="p-8 max-w-screen-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Get inspired</h2>
-      <div className="flex space-x-4 mb-6">
-        {thematicCategories.map((category, index) => (
-          <button
-            key={index}
-            onClick={() => setSelectedCategory(category)}
-            className={`rounded-full px-4 py-2 ${
-              selectedCategory === category 
-                ? 'bg-blue-500 text-white' 
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {filteredItems.map((item, index) => (
-          <div key={index} className="border rounded-lg overflow-hidden shadow-lg">
-            <div className="relative w-full h-48">
-              <Image 
-                src={item.image} 
-                alt={item.name} 
-                layout="fill" 
-                objectFit="cover" 
-                className="rounded-lg" 
-              />
-            </div>
-            <div className="p-4">
-              <h3 className="text-lg font-semibold">{item.name}</h3>
-              <p className="text-gray-600">{item.price}</p>
-              <div className="flex justify-between items-center mt-2">
-                <span className="text-yellow-500">★★★★★</span>
-                <button 
-                  onClick={() => handleItemClick(item)} 
-                  className="bg-blue-500 text-white px-2 py-1 rounded"
-                >
-                  View
-                </button>
+    <div className="flex">
+      {/* Sidebar des filtres */}
+    
+
+      {/* Liste des produits */}
+      <div className="p-8 max-w-screen-2xl mx-auto w-3/4">
+        <h2 className="text-2xl font-bold mb-4">Get inspired</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {filteredItems.map((item, index) => (
+            <div key={index} className="border rounded-lg overflow-hidden shadow-lg">
+              <div className="relative w-full h-48">
+                <Image 
+                  src={item.imageUrl} 
+                  alt={item.name} 
+                  layout="fill" 
+                  objectFit="cover" 
+                  className="rounded-lg" 
+                />
+              </div>
+              <div className="p-4">
+                <h3 className="text-lg font-semibold">{item.name}</h3>
+                <p className="text-gray-600">{item.price}</p>
+                <div className="flex justify-between items-center mt-2">
+                  <span className="text-yellow-500">★★★★★</span>
+                  <button 
+                    onClick={() => handleItemClick(item)} 
+                    className="bg-blue-500 text-white px-2 py-1 rounded"
+                  >
+                    View
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+        <Modal isOpen={isModalOpen} onClose={closeModal} item={selectedItem} />
       </div>
-      <Modal isOpen={isModalOpen} onClose={closeModal} item={selectedItem} />
     </div>
   );
 };
 
-export default Items;
+export default ProductPage;

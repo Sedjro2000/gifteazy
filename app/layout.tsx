@@ -22,16 +22,18 @@ export default function RootLayout({
   const excludedPaths = ["/signin"];
 
   const hideNavbarAndFooter = excludedPaths.includes(pathname);
+  const isDashboard = pathname?.startsWith('/dashboard')
  
   return (
     <html lang="en">
       <body className={inter.className}>
         <SessionProvider>
-        {!hideNavbarAndFooter && <Navbar />}
+        {!hideNavbarAndFooter && !isDashboard && <Navbar />}
+        {!isDashboard && <Navbar />}
         <ListProvider>
           {children}
         </ListProvider>
-        {!hideNavbarAndFooter && <Footer />} 
+        {!hideNavbarAndFooter && !isDashboard && <Footer />} 
         </SessionProvider>
        
 

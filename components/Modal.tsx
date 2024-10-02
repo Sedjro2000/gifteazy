@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  item: { name: string; price: string; image: string } | null;
+  item: { name: string; price: string; imageUrl: string } | null;
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
@@ -44,7 +44,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
         id: uuidv4(), // Generate a unique ID for the item
         name: item?.name ?? '',
         price: item?.price ?? '',
-        image: item?.image ?? '',
+        image: item?.imageUrl ?? '',
       };
   
       console.log('Adding item to existing list:', selectedListId);
@@ -65,7 +65,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
         <div className="flex-1 p-4">
           {/* Step 2 & 3: Replace img with Image */}
           <Image 
-            src={item.image} 
+            src={item.imageUrl} 
             alt={item.name} 
             width={500} // Adjust width as needed
             height={400} // Adjust height as needed

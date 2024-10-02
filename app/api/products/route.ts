@@ -1,189 +1,92 @@
-import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { NextResponse , NextRequest } from "next/server";
+import prisma from "@/lib/prisma";
 
-/**
- * @swagger
- * /api/products:
- *   get:
- *     summary: Retrieve a list of products
- *     tags:
- *       - Products
- *     responses:
- *       200:
- *         description: A list of products
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: string
- *                   name:
- *                     type: string
- *                   description:
- *                     type: string
- *                   price:
- *                     type: number
- *                   imageUrl:
- *                     type: string
- *                   stock:
- *                     type: integer
- *                   merchantId:
- *                     type: string
- *       500:
- *         description: Failed to fetch products
- */
-export async function GET(req: Request) {
+
+
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const name = searchParams.get('name');
+  const minPrice = parseFloat(searchParams.get('minPrice') || '0');
+  const maxPrice = parseFloat(searchParams.get('maxPrice') || 'Infinity');
+  const categoryId = searchParams.get('categoryId');
+  const page = parseInt(searchParams.get('page') || '1');
+  const pageSize = parseInt(searchParams.get('pageSize') || '10');
+
   try {
-    const products = await prisma.product.findMany();
-    return NextResponse.json(products, { status: 200 });
+    const filters: any = {
+      AND: [
+        { price: { gte: minPrice } },
+        { price: { lte: maxPrice } },
+      ],
+    };
+
+    if (name) filters.name = { contains: name, mode: 'insensitive' };
+    if (categoryId) filters.productCategories = { some: { categoryId } };
+
+    const products = await prisma.product.findMany({
+      where: filters,
+      include: {
+        productCategories: true,
+      },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    });
+
+    const totalCount = await prisma.product.count({ where: filters });
+
+    return NextResponse.json({ data: products, total: totalCount });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
   }
 }
 
-/**
- * @swagger
- * /api/products:
- *   post:
- *     summary: Create a new product
- *     tags:
- *       - Products
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               description:
- *                 type: string
- *               price:
- *                 type: number
- *               imageUrl:
- *                 type: string
- *               stock:
- *                 type: integer
- *               merchantId:
- *                 type: string
- *     responses:
- *       201:
- *         description: Product created successfully
- *       500:
- *         description: Failed to create product
- */
-export async function POST(req: Request) {
-  try {
-    const body = await req.json();
-    const { name, description, price, imageUrl, stock, merchantId } = body;
 
-    const newProduct = await prisma.product.create({
+export async function POST(req: NextRequest) {
+  try {
+    // Extraction des données du corps de la requête
+    const {
+      merchantId ,
+      name,
+      description,
+      price,
+      imageUrl,
+      stock,
+      categoryIds,
+    } = await req.json();
+
+    // Vérification que toutes les données nécessaires sont présentes
+    if (!merchantId || !name || !price || !categoryIds) {
+      return NextResponse.json({ error: 'Données manquantes' }, { status: 400 });
+    }
+
+    // Création du produit dans la base de données
+    const product = await prisma.product.create({
       data: {
-        name,
-        description,
-        price,
-        imageUrl,
-        stock,
         merchantId,
-      },
-    });
-
-    return NextResponse.json(newProduct, { status: 201 });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to create product' }, { status: 500 });
-  }
-}
-
-/**
- * @swagger
- * /api/products:
- *   put:
- *     summary: Update an existing product
- *     tags:
- *       - Products
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               id:
- *                 type: string
- *               name:
- *                 type: string
- *               description:
- *                 type: string
- *               price:
- *                 type: number
- *               imageUrl:
- *                 type: string
- *               stock:
- *                 type: integer
- *     responses:
- *       200:
- *         description: Product updated successfully
- *       500:
- *         description: Failed to update product
- */
-export async function PUT(req: Request) {
-  try {
-    const body = await req.json();
-    const { id, name, description, price, imageUrl, stock } = body;
-
-    const updatedProduct = await prisma.product.update({
-      where: { id },
-      data: {
         name,
         description,
         price,
         imageUrl,
         stock,
+        productCategories: {
+          create: categoryIds.map((categoryId: string) => ({
+            categoryId,
+          })),
+        },
+      },
+      include: {
+        productCategories: true, // Inclut les catégories associées dans la réponse
       },
     });
 
-    return NextResponse.json(updatedProduct, { status: 200 });
+    // Retourne le produit créé
+    return NextResponse.json(product, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to update product' }, { status: 500 });
-  }
-}
-
-/**
- * @swagger
- * /api/products:
- *   delete:
- *     summary: Delete a product
- *     tags:
- *       - Products
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               id:
- *                 type: string
- *     responses:
- *       200:
- *         description: Product deleted successfully
- *       500:
- *         description: Failed to delete product
- */
-export async function DELETE(req: Request) {
-  try {
-    const { id } = await req.json();
-
-    await prisma.product.delete({
-      where: { id },
-    });
-
-    return NextResponse.json({ message: 'Product deleted' }, { status: 200 });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 });
+    console.error(error);
+    return NextResponse.json(
+      { error: 'Erreur lors de la création du produit' },
+      { status: 500 }
+    );
   }
 }

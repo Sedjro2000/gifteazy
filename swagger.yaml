@@ -1,0 +1,100 @@
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          description: L'ID unique de la catégorie.
+        name:
+          type: string
+          description: Le nom de la catégorie.
+        description:
+          type: string
+          description: La description de la catégorie.
+        parentId:
+          type: string
+          description: L'ID de la catégorie parente.
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+    CategoryUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Le nom de la catégorie.
+        description:
+          type: string
+          description: La description de la catégorie.
+        parentId:
+          type: string
+          description: L'ID de la catégorie parente.
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Le message d'erreur.
+
+
+components:
+  schemas:
+    Filter:
+      type: object
+      properties:
+        id:
+          type: string
+          description: L'ID unique du filtre.
+        name:
+          type: string
+          description: Le nom du filtre.
+        type:
+          type: string
+          description: Le type du filtre (e.g., 'range', 'checkbox').
+        values:
+          type: array
+          items:
+            type: string
+          description: Liste des valeurs possibles du filtre.
+        categoryId:
+          type: string
+          description: L'ID de la catégorie à laquelle ce filtre est associé.
+    FilterCreate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Le nom du filtre.
+        type:
+          type: string
+          description: Le type du filtre (e.g., 'range', 'checkbox').
+        values:
+          type: array
+          items:
+            type: string
+          description: Liste des valeurs possibles du filtre.
+        categoryId:
+          type: string
+          description: L'ID de la catégorie à laquelle ce filtre est associé.
+    FilterUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Le nom du filtre.
+        type:
+          type: string
+          description: Le type du filtre (e.g., 'range', 'checkbox').
+        values:
+          type: array
+          items:
+            type: string
+          description: Liste des valeurs possibles du filtre.
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Le message d'erreur.

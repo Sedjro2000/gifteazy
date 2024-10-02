@@ -67,6 +67,7 @@
 
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcrypt';
@@ -95,7 +96,11 @@ import bcrypt from 'bcrypt';
 
                 return { id: user.id, name: user.name, email: user.email };
             },
-        })
+        }),
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+          }),
     ],
     pages: {
         signIn: "/auth/signin",

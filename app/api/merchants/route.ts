@@ -1,46 +1,48 @@
-import { NextResponse } from "next/server";
-import formidable from "formidable";
-import { v2 as cloudinary } from "cloudinary";
-import  prisma  from "@/lib/prisma";
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import prisma from '@/lib/prisma';
 
-// Configuration de Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+export async function POST(req: Request) {
+  const session = await getServerSession(); 
+  
+  if (!session) {
+    return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+    console.log ("Non autorisé")
+  }
 
-export const POST = async (req: Request) => {
-  const form = new formidable.IncomingForm();
+  const { storeName, address, phoneNumber, taxIdentificationNumber, userId } = await req.json(); 
+ 
+ if (!storeName || !userId) {
+  return NextResponse.json({ error: 'Store name and user ID are required.' }, { status: 400 });
+}
 
-  // Parse le formulaire
-  const { fields, files } = await new Promise((resolve, reject) => {
-    form.parse(req, (err: any, fields: any, files: any) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve({ fields, files });
+
+  if (!storeName || !address || !phoneNumber || !taxIdentificationNumber) {
+    return NextResponse.json({ error: 'Tous les champs sont requis.' }, { status: 400 });
+  }
+
+
+  try {
+    const merchant = await prisma.merchant.create({
+      data: {
+        userId: userId, 
+        storeName,
+        address,
+        phoneNumber,
+        taxIdentificationNumber,
+      },
     });
-  });
 
-  const { storeName, address, phoneNumber, taxIdentificationNumber, userId } = fields;
+  
+   const updateUser =  await prisma.user.update({
+      where: { id: userId }, 
+      data: { role: 'MERCHANT' }, 
+    });
+     console.log(updateUser)
 
-  // Upload du fichier PDF sur Cloudinary
-  const idDocumentFile = files.idDocument[0];
-  const uploadResult = await cloudinary.uploader.upload(idDocumentFile.filepath, {
-    resource_type: "raw", // Indique que c'est un fichier non-image
-  });
-
-  const newMerchant = await prisma.merchant.create({
-    data: {
-      storeName,
-      address,
-      phoneNumber,
-      taxIdentificationNumber,
-      userId,
-      idDocumentUrl: uploadResult.secure_url, // Stocke l'URL du fichier PDF
-    },
-  });
-
-  return NextResponse.json(newMerchant);
-};
+    return NextResponse.json(merchant, { status: 201 }); 
+  } catch (error) {
+    console.error(error); 
+    return NextResponse.json({ error: 'Une erreur est survenue lors de la création du marchand.' }, { status: 500 });
+  }
+}

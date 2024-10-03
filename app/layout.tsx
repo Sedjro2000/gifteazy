@@ -10,7 +10,6 @@ import { SessionProvider } from "next-auth/react";
 import { metadata } from "@/metadata";
 const inter = Inter({ subsets: ["latin"] });
 
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -18,25 +17,23 @@ export default function RootLayout({
 }>) {
   const pathname = usePathname();
 
-
-  const excludedPaths = ["/signin"];
-
+  
+  const excludedPaths = ["/signin", "/merchantProfile"];
   const hideNavbarAndFooter = excludedPaths.includes(pathname);
-  const isDashboard = pathname?.startsWith('/dashboard')
+  const isDashboard = pathname?.startsWith('/dashboard');
  
   return (
     <html lang="en">
       <body className={inter.className}>
         <SessionProvider>
-        {!hideNavbarAndFooter && !isDashboard && <Navbar />}
-        {!isDashboard && <Navbar />}
-        <ListProvider>
-          {children}
-        </ListProvider>
-        {!hideNavbarAndFooter && !isDashboard && <Footer />} 
+          {/* Affiche le Navbar seulement si on n'est pas sur les chemins exclus ou sur le dashboard */}
+          {!hideNavbarAndFooter && !isDashboard && <Navbar />}
+          <ListProvider>
+            {children}
+          </ListProvider>
+          {/* Affiche le Footer seulement si on n'est pas sur les chemins exclus ou sur le dashboard */}
+          {!hideNavbarAndFooter && !isDashboard && <Footer />} 
         </SessionProvider>
-       
-
       </body>
     </html>
   );

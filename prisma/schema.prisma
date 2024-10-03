@@ -47,7 +47,6 @@ model Session {
   updatedAt    DateTime @updatedAt
 }
 
-
 model Merchant {
   id                       String         @id @default(auto()) @map("_id") @db.ObjectId
   userId                   String         @unique @db.ObjectId 
@@ -55,7 +54,6 @@ model Merchant {
   address                  String?       
   phoneNumber              String?        
   status                   MerchantStatus  @default(PENDING) 
-  idDocument               String?        
   taxIdentificationNumber  String?       
   user                     User           @relation(fields: [userId], references: [id])
   products                 Product[]

@@ -4,16 +4,17 @@ import Select, { MultiValue } from 'react-select';
 
 function ProductFormModal({
   onClose,
-  onProductCreated,  // Nouvelle prop pour signaler la création
+  onProductCreated,  // fonction called après création
 }: {
   onClose: () => void;
-  onProductCreated: () => void; // La fonction qui sera appelée après la création
+  onProductCreated: () => void; 
 }) {
   const [merchantId] = useState('64bfc17f4dabc1234def5678');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [stock, setStock] = useState('');
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
@@ -28,36 +29,57 @@ function ProductFormModal({
     fetchCategories();
   }, []);
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+    }
+  };
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const product = {
-        name,
-        description,
-        price: parseFloat(price),
-        stock: parseInt(stock),
-        imageUrl,
-        merchantId,
-        categoryIds,
-      };
 
-      const res = await fetch('/api/products', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(product),
-      });
-
-      if (res.ok) {
-        onProductCreated();  // Appelle la fonction pour actualiser les produits
-        onClose();
-      } else {
-        console.error('Failed to create product');
-      }
-    } catch (error) {
-      console.error('Error creating product:', error);
+    if (!imageFile) {
+      console.error('No image selected');
+      return;
     }
+
+    // Convert file to Base64
+    const reader = new FileReader();
+    reader.readAsDataURL(imageFile);
+    reader.onload = async () => {
+      const imageBase64 = reader.result;
+
+      try {
+        const product = {
+          name,
+          description,
+          price: parseFloat(price),
+          stock: parseInt(stock),
+          image: imageBase64, 
+          merchantId,
+          categoryIds,
+        };
+
+        const res = await fetch('/api/products', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(product),
+        });
+
+        if (res.ok) {
+          onProductCreated();
+          onClose();
+        } else {
+          console.error('Failed to create product');
+        }
+      } catch (error) {
+        console.error('Error creating product:', error);
+      }
+    };
   };
 
   const handleCategoryChange = (selectedOptions: MultiValue<{ id: string; name: string }>) => {
@@ -99,14 +121,8 @@ function ProductFormModal({
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Image URL</label>
-            <input
-              type="text"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg"
-              required
-            />
+            <label className="block text-gray-700 text-sm font-bold mb-2">Image</label>
+            <input type="file" accept="image/*" onChange={handleFileChange} />
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">Stock</label>

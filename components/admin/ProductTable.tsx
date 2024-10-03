@@ -10,7 +10,7 @@ interface Product {
   description: string;
   price: number;
   stock: number;
-  image: string;  
+  imageUrl: string;  
   createdAt: string;
   updatedAt: string;
 }
@@ -56,7 +56,11 @@ const ProductTable: React.FC = () => {
     setSelectedProductId(id);
     setIsOpen(true);
   };
-
+ /* const generateCloudinaryUrl = (publicId: string) => {
+    return `https://res.cloudinary.com/dxz6p0x6c/image/upload/w_500,h_500/${publicId}.webp`;
+  };*/
+  
+console.log("url de l'image ", products)
   return (
     <div className="bg-white p-6 rounded-lg shadow-md flex flex-col min-h-[calc(100vh-200px)]">
       <div className="flex justify-between items-center mb-4">
@@ -89,9 +93,11 @@ const ProductTable: React.FC = () => {
                 <tr key={product.id} className="border-b">
                   <td className="px-4 py-2">
                     <Image
-                      src={product.image}
-                      alt="img"
+                      src={product.imageUrl}
+                      alt=""
                       className="w-12 h-12 object-cover rounded-md"
+                      width={50}
+                      height={50}
                     />
                   </td>
                   <td className="px-4 py-2">{product.name}</td>
@@ -139,7 +145,7 @@ const ProductTable: React.FC = () => {
       {isOpen && (
         <ProductFormModal 
           onClose={() => setIsOpen(false)} 
-          onProductCreated={fetchProducts}  // Passe la fonction de mise à jour
+          onProductCreated={fetchProducts}  
         />
       )}
 

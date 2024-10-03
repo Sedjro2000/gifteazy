@@ -1,6 +1,12 @@
 import { NextResponse , NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
+import cloudinary from 'cloudinary';
 
+cloudinary.v2.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 
 export async function GET(req: NextRequest) {
@@ -44,30 +50,33 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    // Extraction des données du corps de la requête
     const {
-      merchantId ,
+      merchantId,
       name,
       description,
       price,
-      imageUrl,
+      image,  //l'images est en base 64
       stock,
       categoryIds,
     } = await req.json();
 
-    // Vérification que toutes les données nécessaires sont présentes
     if (!merchantId || !name || !price || !categoryIds) {
       return NextResponse.json({ error: 'Données manquantes' }, { status: 400 });
     }
 
-    // Création du produit dans la base de données
+    
+    const uploadResult = await cloudinary.v2.uploader.upload(image, {
+      folder: 'product_images',
+    });
+
+    
     const product = await prisma.product.create({
       data: {
         merchantId,
         name,
         description,
         price,
-        imageUrl,
+        imageUrl: uploadResult.secure_url,  
         stock,
         productCategories: {
           create: categoryIds.map((categoryId: string) => ({
@@ -76,11 +85,10 @@ export async function POST(req: NextRequest) {
         },
       },
       include: {
-        productCategories: true, // Inclut les catégories associées dans la réponse
+        productCategories: true,
       },
     });
 
-    // Retourne le produit créé
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
     console.error(error);

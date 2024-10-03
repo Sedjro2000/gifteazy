@@ -1,18 +1,28 @@
 'use client'
 import Image from "next/image";
 import { FaGoogle, FaGithub, FaFacebook, FaAppStore, FaApple } from "react-icons/fa";
-import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { useState , useEffect} from "react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 const Auth = () => {
+    const { data: session } = useSession();
     const [isSignUp, setIsSignUp] = useState<boolean>(false);
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [confirmPassword, setConfirmPassword] = useState<string>("");
     const [name, setName] = useState<string>("");
     const toggleSignUp = (): void => setIsSignUp(prev => !prev);
+  
     const router = useRouter();
+    const [callbackUrl, setCallbackUrl] = useState<string>("/");
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const callbackUrlParam = urlParams.get("callbackUrl");
+        if (callbackUrlParam) {
+            setCallbackUrl(callbackUrlParam);
+        }
+    }, []);
 
     
     const handleSubmit = async (e: React.FormEvent) => {
@@ -50,11 +60,18 @@ const Auth = () => {
                 password,
                 redirect: false,
             });
-            console.log(res)
+           
+        
             if (res?.error) {
                 //alert(res.error);
             } else {
-                router.push("/");
+                console.log("voici ",session)
+                if (session?.user?.role ==="MERCHANT"){
+                    router.push("/dashboard/merchant");
+                }else{
+                    router.push(callbackUrl); 
+                }
+               
             }
         }
     }

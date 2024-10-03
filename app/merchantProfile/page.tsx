@@ -4,6 +4,8 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from 'next/navigation'
+
 
 const merchantSchema = z.object({
   storeName: z.string().min(1, "Store name is required"),
@@ -17,9 +19,14 @@ type MerchantForm = z.infer<typeof merchantSchema>;
 export default function MerchantFormPage() {
   const { data: session } = useSession();
   const { register, handleSubmit, formState: { errors } } = useForm<MerchantForm>();
+  const router = useRouter()
 
   const onSubmit = async (data: MerchantForm) => {
   
+    if (!session){
+      router.push("/signin")
+      return;
+    }
     if (!session || !session.user.id) {
       console.error("User ID is not available from the session");
       return;
@@ -27,7 +34,7 @@ export default function MerchantFormPage() {
 
     const userId = session.user.id; 
 
-    const response = await fetch('/api/merchants', {
+    const response = await fetch('/api/merchant', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -37,6 +44,7 @@ export default function MerchantFormPage() {
 
     if (response.ok) {
       console.log("Merchant created successfully");
+      router.push( '/dashboard/merchant')
     } else {
       const errorData = await response.json();
       console.error("Error creating merchant:", errorData);
@@ -47,7 +55,7 @@ export default function MerchantFormPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="max-w-lg w-full bg-white shadow-md rounded-lg p-8">
-        <h1 className="text-2xl font-bold mb-6 text-center">Creer son compte Marchant</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center">Creer votre boutique  🏬  🛍️</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">Nom de la boutique</label>

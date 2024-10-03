@@ -123,7 +123,7 @@ import bcrypt from 'bcrypt';
             if (token && session.user) {
                 session.user.id = token.id;
                 session.user.role = token.role
-                const response = await fetch(`http://localhost:3000/api/users/${session.user.id}`)
+                const response = await fetch(`/api/users/${session.user.id}`)
              
                 if (response.ok) {
                     const userData = await response.json();

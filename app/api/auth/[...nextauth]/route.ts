@@ -123,7 +123,12 @@ import bcrypt from 'bcrypt';
             if (token && session.user) {
                 session.user.id = token.id;
                 session.user.role = token.role
-                const response = await fetch(`/api/users/${session.user.id}`)
+                const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
+                ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+                : 'http://localhost:3000';
+              
+              const response = await fetch(`${baseUrl}/api/users/${session.user.id}`);
+              
              
                 if (response.ok) {
                     const userData = await response.json();

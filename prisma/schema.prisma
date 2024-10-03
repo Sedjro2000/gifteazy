@@ -48,14 +48,19 @@ model Session {
 }
 
 model Merchant {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String @unique @db.ObjectId 
-  storeName String @unique
-  user      User    @relation(fields: [userId], references: [id])
-  products  Product[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                       String         @id @default(auto()) @map("_id") @db.ObjectId
+  userId                   String         @unique @db.ObjectId 
+  storeName                String         @unique
+  address                  String?       
+  phoneNumber              String?        
+  status                   MerchantStatus  @default(PENDING) 
+  taxIdentificationNumber  String?       
+  user                     User           @relation(fields: [userId], references: [id])
+  products                 Product[]
+  createdAt                DateTime       @default(now())
+  updatedAt                DateTime       @updatedAt
 }
+
 
 model Product {
   id          String         @id @default(auto()) @map("_id") @db.ObjectId
@@ -193,3 +198,9 @@ enum DeliveryStatus {
   SHIPPED
   DELIVERED
 }
+enum MerchantStatus {
+  PENDING   
+  APPROVED  
+  REJECTED  
+}
+

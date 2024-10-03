@@ -12,43 +12,43 @@ const Sidebar = () => {
   const menus = [
     {
       name: "Dashboard",
-      path: "/dashboard/admin",
+      path: "/dashboard/merchant",
       icon: <HomeIcon className="h-6 w-6" />,
     },
     {
       name: "Produits",
-      path: "/dashboard/admin/products",
+      path: "/dashboard/merchant/products",
       icon: <CubeIcon className="h-6 w-6" />,
     },
     {
       name: "Catégories",  
-      path: "/dashboard/admin/categories",
+      path: "/dashboard/merchant/categories",
       icon: <Grid className="h-6 w-6" />, 
     },
     {
       name: "Commandes",
-      path: "/dashboard/admin/commandes",
+      path: "/dashboard/merchant/commandes",
       icon: <ShoppingCartIcon className="h-6 w-6" />,
     },
     {
       name: "Clients",
-      path: "/dashboard/admin/clients",
+      path: "/dashboard/merchant/clients",
       icon: <UsersIcon className="h-6 w-6" />,
     },
     {
       name: "Statistiques",
-      path: "/dashboard/admin/statistiques",
+      path: "/dashboard/merchant/statistiques",
       icon: <ChartBarIcon className="h-6 w-6" />,
     },
     {
       name: "Promotions",
-      path: "/dashboard/admin/promotions",
+      path: "/dashboard/merchant/promotions",
       icon: <TagIcon className="h-6 w-6" />,
     },
 
     {
-      name: "Livraison",  // Nouveau menu pour Livraison
-      path: "/dashboard/admin/livraison",
+      name: "Livraison",  
+      path: "/dashboard/merchant/livraison",
       icon: <Truck className="h-6 w-6" />, 
     },
   ];

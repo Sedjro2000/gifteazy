@@ -113,6 +113,7 @@ import bcrypt from 'bcrypt';
             console.log("JWT callback called with token:", token, "and user:", user);
             if (user) {
                 token.id = user.id;
+                token.role = user.role;
             }
             console.log("Updated token:", token);
             return token;
@@ -121,6 +122,15 @@ import bcrypt from 'bcrypt';
             console.log ("Session callback with session :", session, "and token :", token);
             if (token && session.user) {
                 session.user.id = token.id;
+                session.user.role = token.role
+                const response = await fetch(`http://localhost:3000/api/users/${session.user.id}`)
+             
+                if (response.ok) {
+                    const userData = await response.json();
+                    session.user.role = userData.role; 
+                  }else{
+                    console.error("Failed to fetch user data:", response.status);
+                  }
             }
             console.log("Updated session:", session);
             return session;

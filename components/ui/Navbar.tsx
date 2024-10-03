@@ -41,10 +41,10 @@ const Navbar: React.FC = () => {
 
  /* if (status === "loading") {
     return <p>Loading...</p>;
-}*/
+}
 if (status ==="loading"){
   return <Loading />
-}
+}*/
 
 if (status === "authenticated") {
     console.log("Session data:", session);

@@ -1,5 +1,4 @@
-'use client';
-
+'use client'
 import React, { useEffect, useState } from "react";
 import Image from 'next/image';
 import ProductFormModal from '@/components/admin/ProductForm';
@@ -138,7 +137,10 @@ const ProductTable: React.FC = () => {
 
       
       {isOpen && (
-        <ProductFormModal onClose={() => setIsOpen(false)} />
+        <ProductFormModal 
+          onClose={() => setIsOpen(false)} 
+          onProductCreated={fetchProducts}  // Passe la fonction de mise à jour
+        />
       )}
 
     

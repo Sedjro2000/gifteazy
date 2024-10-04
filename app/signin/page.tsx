@@ -64,23 +64,14 @@ const Auth = () => {
             if (res?.error) {
                 alert(res.error || "Erreur lors de la connexion");
             } else {
-                if (session?.user?.role === "MERCHANT") {
-                    router.push("/dashboard/merchant");
-                } else {
-                    router.push(callbackUrl || "/");
-                }
+                router.push(callbackUrl || "/");
             }
         }
     }
 
-   
     useEffect(() => {
         if (status === "authenticated" && session?.user) {
-            if (session.user.role === "MERCHANT") {
-                router.push("/dashboard/merchant");
-            } else {
-                router.push(callbackUrl || "/");
-            }
+            router.push(callbackUrl || "/");
         }
     }, [status, session, router, callbackUrl]);
 

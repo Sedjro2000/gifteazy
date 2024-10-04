@@ -76,29 +76,7 @@ export default function Home() {
           <CtaButton />
         </div>
 
-        <div className="relative lg:h-[550px] md:h-[550px]  items-center justify-center hidden md:block ">
-          <button
-            onClick={prevImage}
-            className="absolute top-1/2 left-0 transform -translate-y-1/2 z-50 p-2 bg-transparent text-white rounded-full opacity-30 hover:opacity-100 transition-opacity duration-300"
-          >
-            ◀
-          </button>
-          <div className="relative w-full h-full overflow-hidden rounded-md shadow-lg">
-            <Image
-              src={images[currentIndex].src}
-              alt={images[currentIndex].alt}
-              layout="fill"
-              objectFit="cover"
-              className="transition-opacity duration-700 ease-in-out"
-            />
-          </div>
-          <button
-            onClick={nextImage}
-            className="absolute top-1/2 right-0 transform -translate-y-1/2 z-50 p-2 bg-transparent text-white rounded-full opacity-30 hover:opacity-100 transition-opacity duration-300"
-          >
-            ▶
-          </button>
-        </div>
+      
       </div>
 
       {/*<div className="grid md:grid-cols-3 gap-6 z-50 relative mt-12">

@@ -61,7 +61,7 @@ const AccountSecurity: React.FC = () => {
             onChange={(e) => setTwoFactorEnabled(e.target.checked)} 
             className="h-4 w-4 text-red-500 focus:ring-red-400 border-gray-300 rounded" 
           />
-          <span className="ml-2">Activer l'authentification à deux facteurs</span>
+          <span className="ml-2">Activer l&apos;authentification à deux facteurs</span>
         </div>
         <p className="text-gray-500 text-sm mt-1">Ajoutez une couche de sécurité supplémentaire à votre compte en activant la 2FA.</p>
       </div>

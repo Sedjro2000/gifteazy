@@ -54,7 +54,7 @@ const SupportPage: React.FC = () => {
           <h4 className="text-lg font-semibold mb-4">Questions Fréquemment Posées</h4>
           <div className="mb-4">
             <h5 className="font-bold">Comment réinitialiser mon mot de passe ?</h5>
-            <p className="text-gray-600">Vous pouvez réinitialiser votre mot de passe en allant dans les paramètres de sécurité de votre compte et en cliquant sur "Réinitialiser le mot de passe".</p>
+            <p className="text-gray-600">Vous pouvez réinitialiser votre mot de passe en allant dans les paramètres de sécurité de votre compte et en cliquant sur Réinitialiser le mot de passe.</p>
           </div>
           <div className="mb-4">
             <h5 className="font-bold">Comment mettre à jour mes informations de paiement ?</h5>
@@ -62,7 +62,7 @@ const SupportPage: React.FC = () => {
           </div>
           <div className="mb-4">
             <h5 className="font-bold">Comment contacter le service client ?</h5>
-            <p className="text-gray-600">Vous pouvez nous contacter via e-mail, téléphone, ou chat en ligne, disponibles dans la section "Nous Contacter".</p>
+            <p className="text-gray-600">Vous pouvez nous contacter via e-mail, téléphone, ou chat en ligne, disponibles dans la section Nous Contacter.</p>
           </div>
         </div>
       )}
@@ -89,7 +89,7 @@ const SupportPage: React.FC = () => {
       {/* Submit Request Section */}
       {activeTab === 'submit' && (
         <div>
-          <h4 className="text-lg font-semibold mb-4">Soumettre une Demande d'Assistance</h4>
+          <h4 className="text-lg font-semibold mb-4">Soumettre une Demande d&apos;Assistance</h4>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-gray-700">Nom</label>

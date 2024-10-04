@@ -33,7 +33,7 @@ export default function Home() {
         </div>
 
         <div className="p-4 bg-white rounded-md shadow-md">
-          <h2 className="text-lg font-semibold">Gestion d'inventaire</h2>
+          <h2 className="text-lg font-semibold">Gestion d&apos; inventaire</h2>
           <InventoryTable data={inventory} />
         </div>
       </div>

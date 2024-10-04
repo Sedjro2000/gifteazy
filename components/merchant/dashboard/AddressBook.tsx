@@ -39,7 +39,7 @@ const AddressBook: React.FC = () => {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-6">
-      <h3 className="text-xl font-semibold mb-4">Carnet d'Adresses</h3>
+      <h3 className="text-xl font-semibold mb-4">Carnet d&apos;Adresses</h3>
 
       {/* List of addresses */}
       <div className="space-y-4 mb-6">

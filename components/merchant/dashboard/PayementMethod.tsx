@@ -130,7 +130,7 @@ const PaymentMethods: React.FC = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700">Date d'expiration</label>
+            <label className="block text-gray-700">Date d&apos;expiration</label>
             <input
               type="text"
               value={newExpiryDate}

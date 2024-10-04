@@ -44,7 +44,7 @@ const ProfileSettings: React.FC = () => {
 
       {/* Username */}
       <div className="mb-4">
-        <label className="block text-gray-700">Nom d'utilisateur</label>
+        <label className="block text-gray-700">Nom d&apos;utilisateur</label>
         <input 
           type="text" 
           value={username} 

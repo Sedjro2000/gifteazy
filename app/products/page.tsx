@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { products, categories } from '@/lib/mockData';
-import Image from 'next/image'; // Import du composant Image
+import Image from 'next/image'; 
 import React from 'react';
 
 const ProductsPage = () => {
@@ -13,10 +13,10 @@ const ProductsPage = () => {
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const [selectedMaterial, setSelectedMaterial] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(9); // 9 produits par page
+  const [itemsPerPage] = useState(9); 
 
   useEffect(() => {
-    // Réinitialiser les filtres lorsque la catégorie change
+    
     setSelectedSize(null);
     setSelectedColor(null);
     setSelectedBrand(null);

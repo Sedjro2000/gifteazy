@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
       name,
       description,
       price,
-      image,  //l'images est en base 64
+      image,  
       stock,
       categoryIds,
     } = await req.json();

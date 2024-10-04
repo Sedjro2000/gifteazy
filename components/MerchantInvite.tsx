@@ -16,7 +16,7 @@ const MerchantInvite = () => {
   };
 
   return (
-    <div className="flex items-center justify-between bg-white p-10">
+    <div className="max-w-screen-2xl mx-auto flex items-center justify-between bg-white p-10">
  
       <div className="w-1/2">
         <Image

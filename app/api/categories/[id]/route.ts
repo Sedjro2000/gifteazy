@@ -45,6 +45,10 @@ import prisma from '@/lib/prisma';
  */
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const { id } = params;
+  if (!id) {
+    return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+  }
+  
   try {
     const category = await prisma.category.findUnique({
       where: { id },
@@ -56,9 +60,11 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 
     return NextResponse.json(category);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch category' }, { status: 500 });
+  } catch (error: any) {
+    console.error("Error details: ", error);
+    return NextResponse.json({ error: error.message || 'Failed to fetch category' }, { status: 500 });
   }
+  
 }
 
 /**
@@ -99,6 +105,10 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   const { id } = params;
   const { name, description, parentId } = await req.json();
+  if (!id) {
+    return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+  }
+  
 
   try {
     const updatedCategory = await prisma.category.update({
@@ -107,9 +117,11 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     });
 
     return NextResponse.json(updatedCategory);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to update category' }, { status: 500 });
+  } catch (error: any) {
+    console.error("Error details: ", error);
+    return NextResponse.json({ error: error.message || 'Failed to update category' }, { status: 500 });
   }
+  
 }
 
 /**
@@ -139,6 +151,10 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
  */
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   const { id } = params;
+  if (!id) {
+    return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+  }
+  
 
   try {
     await prisma.category.delete({
@@ -146,7 +162,9 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     });
 
     return NextResponse.json({ message: 'Category deleted successfully' }, { status: 204 });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to delete category' }, { status: 500 });
+  } catch (error: any) {
+    console.error("Error details: ", error);
+    return NextResponse.json({ error: error.message || 'Failed to delete category' }, { status: 500 });
   }
+  
 }

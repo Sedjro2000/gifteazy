@@ -30,17 +30,34 @@ import prisma from '@/lib/prisma';
  *       500:
  *         description: Erreur lors de la récupération des filtres.
  */
+
+
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-    const { id } = params;
+    const { id } = params; // L'ID des catégories sélectionnées
+    
     try {
+        // Si id représente plusieurs catégories, tu pourrais les séparer par des virgules par exemple.
+        const categoryIds = id.split(',');
+
+        // Récupérer les filtres pour toutes les catégories
         const filters = await prisma.filter.findMany({
-            where: { categoryId: id }
+            where: {
+                categoryId: {
+                    in: categoryIds
+                }
+            },
+            distinct: ['name'], // 'name' doit correspondre à la clé pour laquelle tu veux éviter les doublons
         });
+
+        // Optionnel : Si tu veux plus de contrôle sur les champs pour lesquels tu veux éviter les doublons
+        // Tu pourrais aussi utiliser lodash ou une fonction pour dédupliquer par nom, par exemple.
+
         return NextResponse.json(filters);
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch filters for this category' }, { status: 500 });
     }
 }
+
 
 /**
  * @swagger

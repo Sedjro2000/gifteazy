@@ -20,11 +20,7 @@ const Sidebar = () => {
       path: "/dashboard/merchant/products",
       icon: <CubeIcon className="h-6 w-6" />,
     },
-    {
-      name: "Catégories",  
-      path: "/dashboard/merchant/categories",
-      icon: <Grid className="h-6 w-6" />, 
-    },
+
     {
       name: "Commandes",
       path: "/dashboard/merchant/commandes",

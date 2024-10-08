@@ -8,12 +8,17 @@ import { signOut, useSession } from "next-auth/react";
 import Loading from './loading';
 import { useRouter } from 'next/navigation';
 import UserMenuModal from './UserMenuModal';
+import { useCart } from '@/context/CartContext';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false); 
 
+const { cartItems } = useCart()
+
+const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+console.log('nbre dekement',totalItems)
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -35,7 +40,7 @@ const Navbar: React.FC = () => {
   };
 
   const handleLogin = () => {
-    router.push('/signin');
+    router.push('/auth/signin');
   }
 
   const { data: session, status } = useSession();
@@ -49,7 +54,7 @@ const Navbar: React.FC = () => {
   const handleLinkClick = (e: { preventDefault: () => void; }) => {
     if (!session) {
       e.preventDefault(); 
-      router.push('/signin');
+      router.push('/auth/signin');
     }
   };
 
@@ -77,9 +82,20 @@ const Navbar: React.FC = () => {
               </Link>
             </div>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center gap-4">
+            {/* Cart Icon with Badge */}
+            <div className="relative">
+              <Link href="/cart" className="text-gray-900 hover:text-blue-500">
+                <FaShoppingCart className="h-8 w-8 text-gray-400" />
+                {totalItems > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">
+              {totalItems}
+            </span>
+          )}
+              </Link>
+            </div>
             {session ? (
-              <div className="relative">
+              <div className="relative ml-4">
                 <button
                   onClick={toggleUserMenu}
                   className="bg-white p-2 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 relative"
@@ -92,7 +108,7 @@ const Navbar: React.FC = () => {
                 )}
               </div>
             ) : (
-              <button className="flex items-center" onClick={() => router.push('/signin')}>
+              <button className="flex items-center ml-4" onClick={() => router.push('/auth/signin')}>
                 <FaSignInAlt className="h-8 w-8 text-gray-400 mr-2" aria-hidden="true" />
                 <h1 className="text-gray-900 hover:text-blue-500">Se connecter</h1>
               </button>

@@ -157,7 +157,7 @@ const Auth = () => {
                         </button>
                     </form>
                     <div className="mt-8 flex justify-center space-x-6">
-                        <button className="text-3xl text-white hover:text-gray-300" onClick={() => signIn('google')}>
+                        <button className="text-3xl text-white hover:text-gray-300"  onClick={() => signIn('google', { callbackUrl: '/' })}>
                             <FaGoogle size={32} />
                         </button>
                         <button className="text-3xl text-white hover:text-gray-300">

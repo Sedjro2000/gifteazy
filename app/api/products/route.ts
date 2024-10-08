@@ -48,6 +48,8 @@ export async function GET(req: NextRequest) {
 }
 
 
+
+
 export async function POST(req: NextRequest) {
   try {
     const {
@@ -58,18 +60,33 @@ export async function POST(req: NextRequest) {
       image,  
       stock,
       categoryIds,
+      filters // Filters selected by the user
     } = await req.json();
 
-    if (!merchantId || !name || !price || !categoryIds) {
+    // Validation des données
+    if (!merchantId || !name || !price || !categoryIds || categoryIds.length === 0) {
       return NextResponse.json({ error: 'Données manquantes' }, { status: 400 });
     }
 
-    
+    // Upload de l'image à Cloudinary
     const uploadResult = await cloudinary.v2.uploader.upload(image, {
       folder: 'product_images',
     });
 
-    
+    // Validation des categoryIds (Doit être des ObjectID valides)
+    if (!categoryIds.every((id: string) => id.match(/^[0-9a-fA-F]{24}$/))) {
+      return NextResponse.json({ error: 'Invalid categoryId format' }, { status: 400 });
+    }
+
+    // Check if filters is an object and convert to an array
+    const filterEntries = typeof filters === 'object' && filters !== null 
+      ? Object.entries(filters).map(([filterId, value]) => ({
+          filter: { connect: { id: filterId } }, // Ensure filterId connects to the appropriate filter
+          value,
+        })) 
+      : []; // Default to an empty array if filters is not valid
+
+    // Création du produit
     const product = await prisma.product.create({
       data: {
         merchantId,
@@ -83,18 +100,26 @@ export async function POST(req: NextRequest) {
             categoryId,
           })),
         },
+        filters: {
+          create: filterEntries, // Use the transformed filter entries
+        },
       },
       include: {
         productCategories: true,
+        filters: true, // Inclure les filtres dans la réponse
       },
     });
 
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
     console.error(error);
+    if (error.code === 'P2023') {
+      return NextResponse.json({ error: 'Invalid ObjectID provided' }, { status: 400 });
+    }
     return NextResponse.json(
       { error: 'Erreur lors de la création du produit' },
       { status: 500 }
     );
   }
 }
+

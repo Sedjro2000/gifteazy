@@ -1,10 +1,22 @@
-'use client';
+
+      
+      
+      
+      'use client';
 import { useState, useEffect } from 'react';
 import Select, { MultiValue } from 'react-select';
 
+// Définition du type Filter
+type Filter = {
+  id: string;
+  name: string;
+  type: string;
+  values: string[];
+};
+
 function ProductFormModal({
   onClose,
-  onProductCreated,  // fonction called après création
+  onProductCreated,  // fonction appelée après création
 }: {
   onClose: () => void;
   onProductCreated: () => void; 
@@ -13,21 +25,75 @@ function ProductFormModal({
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [stock, setStock] = useState('');
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [filters, setFilters] = useState<Filter[]>([]);
+  const [selectedFilters, setSelectedFilters] = useState<{ [key: string]: string | null }>({}); // Filtres sélectionnés
 
   useEffect(() => {
     async function fetchCategories() {
       const res = await fetch('/api/categories');
       const data = await res.json();
+      console.log("Categories fetched: ", data); // Log pour vérifier les catégories récupérées
       setCategories(data);
     }
 
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    async function fetchFilters() {
+      if (categoryIds.length === 0) {
+        setFilters([]);
+        return;
+      }
+  
+      try {
+        console.log("Fetching filters for category IDs: ", categoryIds);
+  
+        const filterPromises = categoryIds.map((id) =>
+          fetch(`/api/filters/category/${id}`).then((res) => {
+            if (!res.ok) {
+              throw new Error(`Failed to fetch filters for category ${id}`);
+            }
+            return res.json();
+          })
+        );
+  
+        const filtersArray = await Promise.all(filterPromises);
+  
+        // Combiner les filtres de toutes les catégories
+        const combinedFilters = filtersArray.flat();
+  
+        // Utilisation de Map pour dédupliquer les filtres par nom ou type
+        const uniqueFiltersMap = new Map<string, Filter>();
+  
+        combinedFilters.forEach((filter: Filter) => {
+          if (!uniqueFiltersMap.has(filter.name)) {
+            uniqueFiltersMap.set(filter.name, filter);
+          }
+        });
+  
+        // Convertir le Map en tableau
+        const uniqueFilters = Array.from(uniqueFiltersMap.values());
+        console.log("Unique filters: ", uniqueFilters); // Log pour vérifier les filtres dédupliqués
+        setFilters(uniqueFilters);
+
+        console.log("filtersArray: ", filtersArray);
+        console.log("combinedFilters: ", combinedFilters);
+        console.log("Type of combinedFilters: ", Array.isArray(combinedFilters));
+      } catch (error) {
+        console.error("Error fetching filters: ", error);
+      }
+    }
+
+    
+    fetchFilters();
+  }, [categoryIds]);
+  
+  
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -35,7 +101,6 @@ function ProductFormModal({
       setImageFile(file);
     }
   };
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,7 +110,7 @@ function ProductFormModal({
       return;
     }
 
-    // Convert file to Base64
+    // Convertir l'image en base64
     const reader = new FileReader();
     reader.readAsDataURL(imageFile);
     reader.onload = async () => {
@@ -57,10 +122,13 @@ function ProductFormModal({
           description,
           price: parseFloat(price),
           stock: parseInt(stock),
-          image: imageBase64, 
+          image: imageBase64,
           merchantId,
           categoryIds,
+          filters: selectedFilters, // Ajouter les filtres sélectionnés ici
         };
+
+        console.log("Submitting product: ", product); // Log pour vérifier les données du produit
 
         const res = await fetch('/api/products', {
           method: 'POST',
@@ -83,7 +151,18 @@ function ProductFormModal({
   };
 
   const handleCategoryChange = (selectedOptions: MultiValue<{ id: string; name: string }>) => {
-    setCategoryIds(selectedOptions.map((opt) => opt.id));
+    const selectedCategoryIds = selectedOptions.map((opt) => opt.id);
+    console.log("Selected category IDs: ", selectedCategoryIds); // Log pour vérifier la sélection des catégories
+    setCategoryIds(selectedCategoryIds);
+  };
+  
+
+  const handleFilterChange = (filterId: string, value: string) => {
+    console.log("Filter changed: ", filterId, value); // Log pour vérifier les filtres sélectionnés
+    setSelectedFilters((prevFilters) => ({
+      ...prevFilters,
+      [filterId]: value,
+    }));
   };
 
   return (
@@ -145,6 +224,34 @@ function ProductFormModal({
               options={categories}
             />
           </div>
+
+          {/* Ajout des filtres dynamiques */}
+          {Array.isArray(filters) && filters.length > 0 && (
+  <div className="mb-4">
+    <h3 className="text-lg font-bold mb-2">Filtres</h3>
+    {filters.map((filter) => (
+      <div key={filter.id} className="mb-2">
+        <label className="block text-gray-700 text-sm font-bold mb-2">{filter.name}</label>
+        <select
+          className="w-full px-3 py-2 border rounded-lg mb-4"
+          onChange={(e) => handleFilterChange(filter.name, e.target.value)}
+        >
+          <option value="">Sélectionner une option</option>
+          {filter.values && filter.values.length > 0 ? (
+            filter.values.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))
+          ) : (
+            <option disabled>Aucune option disponible</option>
+          )}
+        </select>
+      </div>
+    ))}
+  </div>
+)}
+
           <div className="flex justify-end">
             <button
               type="button"
@@ -157,7 +264,7 @@ function ProductFormModal({
               type="submit"
               className="bg-purple-600 text-white px-4 py-2 rounded-lg"
             >
-              Ajouter
+Ajouter
             </button>
           </div>
         </form>

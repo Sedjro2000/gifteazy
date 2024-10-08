@@ -25,6 +25,8 @@ model User {
   lists     List[]
   donations Order[]
   merchant  Merchant? 
+
+  Cart Cart[]
 }
 
 model Account {
@@ -77,6 +79,8 @@ model Product {
   listItems         ListItem[]
   productCategories ProductCategory[]
   filters           ProductFilter[]   
+
+  CartItem CartItem[]
 }
 
 model Category {
@@ -178,6 +182,27 @@ model OrderListItem {
   order      Order    @relation(fields: [orderId], references: [id])
   listItem   ListItem @relation(fields: [listItemId], references: [id])
 }
+
+model Cart {
+  id         String       @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String       @db.ObjectId
+  items      CartItem[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  user       User         @relation(fields: [userId], references: [id])
+}
+
+model CartItem {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  cartId    String    @db.ObjectId
+  productId String    @db.ObjectId
+  quantity  Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  cart      Cart      @relation(fields: [cartId], references: [id])
+  product   Product   @relation(fields: [productId], references: [id])
+}
+
 
 enum Role {
   ADMIN

@@ -100,7 +100,16 @@ import bcrypt from 'bcrypt';
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-          }),
+            async profile(profile) {
+                console.log("Google profile received:", profile);
+                return {
+                    id: profile.sub,
+                    name: profile.name,
+                    email: profile.email,
+                    image: profile.picture,
+                };
+            }
+        }),
     ],
     pages: {
         signIn: "/auth/signin",
@@ -122,39 +131,16 @@ import bcrypt from 'bcrypt';
             console.log ("Session callback with session :", session, "and token :", token);
             if (token && session.user) {
                 session.user.id = token.id;
-                session.user.role = token.role
+           
 
-
-                const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
-                ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-                : 'http://localhost:3000';
-              
-              const response = await fetch(`${baseUrl}/api/users/${session.user.id}`);
+            
               
              
-                if (response.ok) {
-                    const userData = await response.json();
-                    session.user.role = userData.role; 
-                  }else{
-                    console.error("Failed to fetch user data:", response.status);
-                  }
             }
             console.log("Updated session:", session);
             return session;
         },
-   
-        async redirect({ url, baseUrl }: { url: string, baseUrl: string }) {
-            // Utiliser session.user.role pour la redirection
-            const session = await import('next-auth/react').then(({ getSession }) => getSession());
-            
-            if (session?.user?.role === "merchant") {
-                console.log("Redirection vers /dashboard/merchant pour un merchant.");
-                return `${baseUrl}/dashboard/merchant`;
-            }
-    
-            console.log("Redirection par défaut vers /");
-            return `${baseUrl}/`; // Redirige vers la page d'accueil si le rôle n'est pas "merchant"
-        }
+ 
     }
 }
 

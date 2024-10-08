@@ -83,7 +83,7 @@ console.log('nbre dekement',totalItems)
             </div>
           </div>
           <div className="flex items-center gap-4">
-            {/* Cart Icon with Badge */}
+          
             <div className="relative">
               <Link href="/cart" className="text-gray-900 hover:text-blue-500">
                 <FaShoppingCart className="h-8 w-8 text-gray-400" />

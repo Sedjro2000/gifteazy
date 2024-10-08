@@ -37,8 +37,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
     }
 
     if (newListName) {
-      addList(newListName); // Create a new list if the name is provided
-      setNewListName(''); // Clear the input field
+      addList(newListName); 
+      setNewListName(''); 
     } else if (selectedListId) {
       const itemToAdd = {
         id: uuidv4(),
@@ -47,8 +47,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
         image: item?.imageUrl ?? '',
       };
 
-      addItemToList(selectedListId, itemToAdd); // Add the item with an ID to the list
-      onClose(); // Close the modal after adding the item
+      addItemToList(selectedListId, itemToAdd); 
+      onClose(); 
     }
   };
 
@@ -56,17 +56,17 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
     if (!item) return;
 
     const cartItem = {
-      id: uuidv4(),  // Générer un ID unique pour cet ajout au panier
-      productId: item.id,  // Utiliser l'ID du produit
-      quantity: 1,  // Définir la quantité à 1 pour l'instant
+      id: uuidv4(),  
+      productId: item.id,  
+      quantity: 1,  
       name: item.name,
       price: item.price,
       imageUrl: item.imageUrl
     };
     console.log('Cart item to add:', cartItem); 
-    addToCart(cartItem);  // Ajouter l'item au panier en utilisant le context
+    addToCart(cartItem);  
     onClose();  
-    console.log(cartItem)// Fermer le modal après l'ajout
+    console.log(cartItem)
   };
  
 

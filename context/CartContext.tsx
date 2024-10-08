@@ -28,14 +28,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
 
-  useEffect(() => {
+  {/*useEffect(() => {
     const loadCart = async () => {
       if (session) {
-        console.log('Session active, loading cart...'); // Vérifier si la session est active
+        console.log('Session active, loading cart...'); 
         try {
           const response = await fetch('/api/cart');
           const data = await response.json();
-          console.log('Cart items loaded from API:', data.items); // Afficher les éléments du panier récupérés
+          console.log('Cart items loaded from API:', data.items); 
           setCartItems(data.items || []);
         } catch (error) {
           console.error('Error loading cart:', error);
@@ -47,12 +47,34 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loadCart();
   }, [session]);
   useEffect(() => {
-    console.log('Cart items state updated:', cartItems); // Afficher les éléments du panier à chaque mise à jour
-  }, [cartItems]);
+    console.log('Cart items state updated:', cartItems);
+  }, [cartItems]);*/}
+
+
+  useEffect(() => {
+    const loadCart = async () => {
+      if (session) {
+        console.log('Session active, loading cart...'); 
+      } else {
+        console.log('No session, attempting to load cart anyway...'); 
+      }
+      
+      try {
+        const response = await fetch('/api/cart');
+        const data = await response.json();
+        console.log('Cart items loaded from API:', data.items); 
+        setCartItems(data.items || []);
+      } catch (error) {
+        console.error('Error loading cart:', error);
+      }
+    };
+    loadCart();
+  }, []); 
+  
   
   
   const addToCart = useCallback(async (item: CartItem) => {
-    console.log('Adding to cart:', item); // Afficher l'élément à ajouter
+    console.log('Adding to cart:', item); 
     try {
       const response = await fetch('/api/cart', {
         method: 'POST',
@@ -66,20 +88,20 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error('Failed to add item to cart');
       }
   
-      // Récupérer le panier mis à jour depuis la réponse
+      
       const updatedCart = await response.json();
-      console.log('Updated cart after adding item:', updatedCart); // Afficher le panier mis à jour
+      console.log('Updated cart after adding item:', updatedCart); 
   
-      // Mettre à jour l'état des items du panier dans le contexte
-      setCartItems(updatedCart.cart.items || []); // Mettez à jour avec les items du panier
+      
+      setCartItems(updatedCart.cart.items || []); 
   
-      // Mettez également à jour le nombre total d'items si vous l'avez stocké dans un état
+    
      
   
     } catch (error) {
       console.error('Error adding to cart:', error);
     }
-  }, [setCartItems, ]); // N'oubliez pas d'ajouter les dépendances si nécessaire
+  }, [setCartItems, ]); 
 
   const removeFromCart = useCallback(async (productId: string) => {
     try {

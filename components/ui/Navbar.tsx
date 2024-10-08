@@ -15,9 +15,9 @@ const Navbar: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false); 
 
-const { cartItems } = useCart()
+const { totalItems } = useCart()
 
-const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
 console.log('nbre dekement',totalItems)
   const toggleMenu = () => {
     setIsOpen(!isOpen);

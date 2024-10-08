@@ -22,6 +22,7 @@ export default function RootLayout({
   const excludedPaths = ["/auth/signin", "/merchantProfile"];
   const hideNavbarAndFooter = excludedPaths.includes(pathname);
   const isDashboard = pathname?.startsWith('/dashboard');
+  
  
   return (
     <html lang="en">

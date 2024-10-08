@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { v4 as uuidv4 } from 'uuid';
 import { useSession } from "next-auth/react";
 import { useRouter } from 'next/navigation';
+import { useCart } from '@/context/CartContext';
 
 interface ModalProps {
   isOpen: boolean;
@@ -19,7 +20,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
   const [newListName, setNewListName] = useState<string>('');
   const { data: session, status } = useSession();
   const router = useRouter();
- 
+  const { addToCart } = useCart();
+  
   useEffect(() => {
     if (isOpen) {
       // Reset the form when modal opens
@@ -50,37 +52,23 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
     }
   };
 
-  const handleAddToCart = async () => {
-    if (!session) {
-      // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
-      router.push('/signin');
-      return;
-    }
+  const handleAddToCart = () => {
+    if (!item) return;
 
-    try {
-        // Préparation des données pour l'ajout au panier
-        const response = await fetch('/api/cart', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                productId: item?.id, // Tu dois t'assurer que `item` contient un `id`
-                quantity: 1, // Par défaut, on ajoute une unité de l'article
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to add item to cart');
-        }
-
-        const data = await response.json();
-        console.log('Item added to cart:', data);
-        // Afficher une notification de succès ou mettre à jour l'état du panier
-    } catch (error) {
-        console.error('Error adding item to cart:', error);
-    }
-};
+    const cartItem = {
+      id: uuidv4(),  // Générer un ID unique pour cet ajout au panier
+      productId: item.id,  // Utiliser l'ID du produit
+      quantity: 1,  // Définir la quantité à 1 pour l'instant
+      name: item.name,
+      price: item.price,
+      imageUrl: item.imageUrl
+    };
+    console.log('Cart item to add:', cartItem); 
+    addToCart(cartItem);  // Ajouter l'item au panier en utilisant le context
+    onClose();  
+    console.log(cartItem)// Fermer le modal après l'ajout
+  };
+ 
 
   if (!isOpen || !item) return null;
 
@@ -105,14 +93,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
           </div>
           <p className="text-yellow-300 mb-2">  {item.description}</p>
         
-          <div className="mb-4">
-          
-          </div>
           <p className="text-yellow-300 mb-4">{item.price} CFA </p>
        
-          {/*<div className="text-yellow-300 mb-4">
-            ★★★★★
-          </div>*/}
           <div className="mb-4">
             <label className="block text-white mb-2">Choisir une liste</label>
             <select 
@@ -138,20 +120,20 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
               className="border rounded p-2 w-full"
             />
           </div>
-       <div className=' mt-4 flex gap-2 justify-between  p-2 '>
-       <button 
-            onClick={handleAddToList} 
-            className="bg-blue-500 text-white rounded-full px-4 py-3 hover:bg-blue-600 "
-          >
-            {newListName ? 'Creer une liste ' : 'Ajouter à une liste '}
-          </button>
-          <button 
-            onClick={handleAddToCart} 
-            className="bg-green-500 text-white rounded-full px-4 py-3 hover:bg-green-600 "
-          >
-            Ajouter au panier 
-          </button>
-       </div>
+          <div className=' mt-4 flex gap-2 justify-between p-2 '>
+            <button 
+              onClick={handleAddToList} 
+              className="bg-blue-500 text-white rounded-full px-4 py-3 hover:bg-blue-600"
+            >
+              {newListName ? 'Creer une liste ' : 'Ajouter à une liste '}
+            </button>
+            <button 
+              onClick={handleAddToCart} 
+              className="bg-green-500 text-white rounded-full px-4 py-3 hover:bg-green-600 "
+            >
+              Ajouter au panier
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -62,7 +62,8 @@ export async function POST(req: NextRequest) {
             }
         }
 
-        return NextResponse.json({ message: 'Item added to cart successfully' });
+        return NextResponse.json({ message: 'Item added to cart successfully', cart });
+
     } catch (error) {
         console.error(error);
         return NextResponse.json({ error: 'An error occurred' }, { status: 500 });

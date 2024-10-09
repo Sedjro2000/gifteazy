@@ -28,15 +28,17 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
       <SessionProvider>
+      <CartProvider>
           <ListProvider>
-            <CartProvider>
+          
               {/* Navbar */}
               {!hideNavbarAndFooter && !isDashboard && <Navbar />}
               {children}
               {/* Footer */}
               {!hideNavbarAndFooter && !isDashboard && <Footer />} 
-            </CartProvider>
+         
           </ListProvider>
+          </CartProvider>
         </SessionProvider>
       </body>
     </html>

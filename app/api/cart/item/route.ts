@@ -16,7 +16,7 @@ export async function DELETE(req: NextRequest) {
             return NextResponse.json({ error: 'Missing productId' }, { status: 400 });
         }
 
-        // Supprimer l'article du panier
+        // Récupérer le panier de l'utilisateur
         const cart = await prisma.cart.findFirst({
             where: { userId: token.sub },
         });
@@ -25,14 +25,15 @@ export async function DELETE(req: NextRequest) {
             return NextResponse.json({ error: 'Cart not found' }, { status: 404 });
         }
 
-        const cartItem = await prisma.cartItem.deleteMany({
+        // Supprimer l'article spécifique du panier
+        const cartItem = await prisma.cartItem.findFirst({
             where: {
-                cartId: cart.id,
-                productId: productId,
+              cartId: cart.id,
+              productId: productId,
             },
-        });
-
-        if (!cartItem.count) {
+          });
+          
+        if (!cartItem) {
             return NextResponse.json({ error: 'Item not found in cart' }, { status: 404 });
         }
 

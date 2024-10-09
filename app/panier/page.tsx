@@ -1,5 +1,27 @@
 // pages/cart.tsx
 const CartPage = () => {
+    {/*useEffect(() => {
+    const loadCart = async () => {
+      if (session) {
+        console.log('Session active, loading cart...'); 
+        try {
+          const response = await fetch('/api/cart');
+          const data = await response.json();
+          console.log('Cart items loaded from API:', data.items); 
+          setCartItems(data.items || []);
+        } catch (error) {
+          console.error('Error loading cart:', error);
+        }
+      } else {
+        console.log('No session, skipping cart load');
+      }
+    };
+    loadCart();
+  }, [session]);
+  useEffect(() => {
+    console.log('Cart items state updated:', cartItems);
+  }, [cartItems]);*/}
+
     return (
       <div className="container mx-auto p-6">
         <h1 className="text-3xl font-bold mb-4">Votre Panier</h1>

@@ -18,7 +18,7 @@ const Navbar: React.FC = () => {
 const { totalItems } = useCart()
 
 
-console.log('nbre dekement',totalItems)
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };

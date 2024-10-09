@@ -131,6 +131,7 @@ import bcrypt from 'bcrypt';
             console.log ("Session callback with session :", session, "and token :", token);
             if (token && session.user) {
                 session.user.id = token.id;
+                session.jwt = token;
            
 
             

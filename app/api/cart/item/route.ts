@@ -5,9 +5,9 @@ import { getToken } from "next-auth/jwt";
 export async function DELETE(req: NextRequest) {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-    if (!token || !token.sub) {
+   /* if (!token || !token.sub) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    }*/
 
     try {
         const { productId } = await req.json();
@@ -18,7 +18,7 @@ export async function DELETE(req: NextRequest) {
 
         // Récupérer le panier de l'utilisateur
         const cart = await prisma.cart.findFirst({
-            where: { userId: token.sub },
+            where: { userId:'66edb9feff8fb4524ddf42bf' },
         });
 
         if (!cart) {
@@ -36,6 +36,13 @@ export async function DELETE(req: NextRequest) {
         if (!cartItem) {
             return NextResponse.json({ error: 'Item not found in cart' }, { status: 404 });
         }
+
+        await prisma.cartItem.delete({
+            where: {
+                id: cartItem.id, 
+            },
+        });
+
 
         return NextResponse.json({ message: 'Item removed from cart' });
     } catch (error) {

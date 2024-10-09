@@ -4,28 +4,36 @@ import { useCart } from '@/context/CartContext'; // Assurez-vous que ce chemin e
 import Image from 'next/image';
 
 const CartPage = () => {
-  const { cartItems, addToCart, removeFromCart, totalItems, setCartItems } = useCart();
+  const { cartItems, addToCart, removeFromCart, totalItems, updateQuantity } = useCart();
 
   const handleQuantityChange = (item: any, quantityChange: number) => {
     const newQuantity = item.quantity + quantityChange;
-    
-    console.log('Changing quantity for item:', item.name, 'New Quantity:', newQuantity);
-
+  
+    console.log('Changing quantity for item:', item.productId, 'New Quantity:', newQuantity);
+  
     if (newQuantity <= 0) {
-      console.log('Removing item from cart:', item.name);
-      removeFromCart(item.productId);
+      console.log('Removing item from cart:', item.productId);
+      removeFromCart(item.productId);  // Supprimer l'article si la quantité est 0 ou moins
     } else {
-      console.log('Updating quantity in cart for item:', item.name, 'New Quantity:', newQuantity);
-      addToCart({ ...item, quantity: newQuantity });
+      console.log('Updating quantity in cart for item:', item.productId, 'New Quantity:', newQuantity);
+      updateQuantity(item.productId, newQuantity);  // Mettre à jour la quantité
     }
   };
+  
 
   const handleRemove = (productId: string) => {
     console.log('Removing item with productId:', productId);
     removeFromCart(productId);
   };
 
-  const totalPrice = cartItems.reduce((acc, item) => acc + item.quantity * parseFloat(item.product.price), 0).toFixed(2);
+ /* const totalPrice = cartItems.reduce((acc, item) => acc + item.quantity * parseFloat(item.product.price), 0).toFixed(2);*/
+  const totalPrice = cartItems.reduce((acc, item) => {
+    if (item.product && item.product.price) {
+      return acc + item.quantity * parseFloat(item.product.price);
+    }
+    return acc;  // Si `product` ou `price` est `undefined`, on ignore cet article dans le total
+  }, 0).toFixed(2);
+  
   useEffect(() => {
     console.log('Cart Items:', cartItems); // Log des articles dans le panier pour vérification
     console.log('Total Price:', totalPrice); // Log du prix total
@@ -75,7 +83,7 @@ const CartPage = () => {
                       </div>
                     </div>
                     <button
-                      onClick={() => handleRemove(item.productId)}
+                      onClick={() => handleRemove(item.product.id)}
                       className="text-red-500 hover:text-red-700 font-bold"
                     >
                       Remove

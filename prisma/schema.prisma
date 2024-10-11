@@ -158,7 +158,6 @@ model ListItem {
   updatedAt DateTime @updatedAt
   list           List            @relation(fields: [listId], references: [id])
   product        Product         @relation(fields: [productId], references: [id])
-  orderListItems OrderListItem[] 
 }
 
 model Order {
@@ -174,14 +173,15 @@ model Order {
 }
 
 model OrderListItem {
-  id         String @id @default(auto()) @map("_id") @db.ObjectId
-  orderId    String @db.ObjectId
-  listItemId String @db.ObjectId
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId    String   @db.ObjectId
+  cartItemId String   @db.ObjectId  // Référence à l'article du panier
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   order      Order    @relation(fields: [orderId], references: [id])
-  listItem   ListItem @relation(fields: [listItemId], references: [id])
+  cartItem   CartItem @relation(fields: [cartItemId], references: [id])
 }
+
 
 model Cart {
   id         String       @id @default(auto()) @map("_id") @db.ObjectId
@@ -203,6 +203,7 @@ model CartItem {
   product   Product   @relation(fields: [productId], references: [id])
     
   @@unique([cartId, productId])
+  OrderListItem OrderListItem[]
 }
 
 

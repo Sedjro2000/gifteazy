@@ -1,35 +1,42 @@
-'use client'
+'use client';
 import React, { useState } from 'react';
 import { useLists } from '../../context/ListsContext';
 import { FaShareAlt, FaTrash, FaEye, FaPlus } from 'react-icons/fa';
 import CreateListModal from '@/components/CreateListModal';
 import ListViewModal from '@/components/ListViewModal';
 import ShareModal from '@/components/ShareModal';
-
-const demoProducts = [
-  { id: 1, name: 'Produit A', price: 29.99, description: 'Description du produit A' },
-  { id: 2, name: 'Produit B', price: 49.99, description: 'Description du produit B' },
-  { id: 3, name: 'Produit C', price: 19.99, description: 'Description du produit C' },
-  { id: 1, name: 'Produit A', price: 29.99, description: 'Description du produit A' },
-  { id: 2, name: 'Produit B', price: 49.99, description: 'Description du produit B' },
-  { id: 3, name: 'Produit C', price: 19.99, description: 'Description du produit C' },
-  { id: 3, name: 'Produit C', price: 19.99, description: 'Description du produit C' },
-];
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 
 const ListsPage: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isListViewModalOpen, setIsListViewModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [selectedList, setSelectedList] = useState<any>(null);
+  const [listToDelete, setListToDelete] = useState<string | null>(null);
   const [listToShare, setListToShare] = useState<string | null>(null);
   const { lists, addList, deleteList } = useLists();
 
-  const handleCreateList = (listName: string) => {
-    addList(listName);
+  const openDeleteModal = (listId: string) => {
+    setListToDelete(listId);
+    setIsDeleteModalOpen(true);
   };
 
-  const handleDeleteList = (listId: string) => {
-    deleteList(listId);
+  const handleConfirmDelete = async () => {
+    if (listToDelete) {
+      await deleteList(listToDelete);
+      setListToDelete(null);
+    }
+    setIsDeleteModalOpen(false);
+  };
+
+  const handleCancelDelete = () => {
+    setListToDelete(null);
+    setIsDeleteModalOpen(false);
+  };
+
+  const handleCreateList = (listName: string) => {
+    addList(listName);
   };
 
   const handleShareList = (listName: string) => {
@@ -37,19 +44,11 @@ const ListsPage: React.FC = () => {
     setIsShareModalOpen(true);
   };
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const openCreateModal = () => setIsCreateModalOpen(true);
+  const closeCreateModal = () => setIsCreateModalOpen(false);
 
-  const handleViewList = (list: any) => {
-    console.log("voici la liste ",list)
-    // Ajouter les produits fictifs à la liste pour la démonstration
-    const listWithItems = {
-      ...list,
-      items: lists,
-      
-    };
+  const handleView = (list: any) => {
     setSelectedList(list);
-    console.log("voici la liste qui a été selectionné",list)
     setIsListViewModalOpen(true);
   };
 
@@ -60,7 +59,7 @@ const ListsPage: React.FC = () => {
           <h2 className="text-3xl font-extrabold text-gray-800">Mes Listes de Cadeaux</h2>
           <div className="flex hidden md:block">
             <button
-              onClick={openModal}
+              onClick={openCreateModal}
               className="bg-gray-800 text-white px-5 py-2 rounded-lg shadow-lg hover:bg-gray-700 transition duration-200"
             >
               + Nouvelle Liste
@@ -79,30 +78,30 @@ const ListsPage: React.FC = () => {
               >
                 <div className="flex flex-col justify-between h-full">
                   <div className="mb-4">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{list.name}</h3>
-                    <p className="text-sm text-gray-500">Total Items: {list.items.length}</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{list.title}</h3>
+                    <p className="text-sm text-gray-500">Total Items: {list.items ? list.items.length : 0}</p>
                   </div>
                   <div className="flex justify-between items-center mt-auto">
                     <button
-                      onClick={() => handleViewList(list)}
+                      onClick={() => handleView(list)}
                       className="text-gray-700 hover:text-gray-500 flex items-center space-x-2"
                     >
                       <FaEye size={20} />
-                      <span>View</span>
+                      <span>Voir</span>
                     </button>
                     <button
-                      onClick={() => handleDeleteList(list.id)}
+                      onClick={() => openDeleteModal(list.id)}
                       className="text-red-500 hover:text-red-400 flex items-center space-x-2"
                     >
                       <FaTrash size={20} />
-                      <span>Delete</span>
+                      <span>Supprimer</span>
                     </button>
                     <button
-                      onClick={() => handleShareList(list.name)}
+                      onClick={() => handleShareList(list.title)}
                       className="text-gray-700 hover:text-gray-500 flex items-center space-x-2"
                     >
                       <FaShareAlt size={20} />
-                      <span>Share</span>
+                      <span>Partager</span>
                     </button>
                   </div>
                 </div>
@@ -112,19 +111,21 @@ const ListsPage: React.FC = () => {
         )}
       </div>
       <button
-        onClick={openModal}
+        onClick={openCreateModal}
         className="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-500 transition duration-200"
       >
         <FaPlus size={24} />
       </button>
 
-      <CreateListModal isOpen={isModalOpen} onClose={closeModal} onCreate={handleCreateList} />
+      {/* Modal de création */}
+      <CreateListModal isOpen={isCreateModalOpen} onClose={closeCreateModal} onCreate={handleCreateList} />
 
-      {/* Modal de visualisation de la liste */}
+      {/* Modal de visualisation de liste */}
       {selectedList && (
         <ListViewModal
           isOpen={isListViewModalOpen}
-          list={selectedList}
+          listId={selectedList.id}
+          listTitle={selectedList.title}
           onClose={() => setIsListViewModalOpen(false)}
         />
       )}
@@ -134,6 +135,16 @@ const ListsPage: React.FC = () => {
         listName={listToShare || ''}
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
+      />
+
+      {/* Modal de confirmation de suppression */}
+      <ConfirmationModal 
+        isOpen={isDeleteModalOpen}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        message="Êtes-vous sûr de vouloir supprimer cette liste ?"
+        confirmText="Confirmer"
+        cancelText="Annuler"
       />
     </div>
   );

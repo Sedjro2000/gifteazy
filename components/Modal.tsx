@@ -4,7 +4,7 @@ import { useLists } from '../context/ListsContext';
 import { FiX } from 'react-icons/fi';
 import Image from 'next/image'; 
 import { v4 as uuidv4 } from 'uuid';
-import { useSession } from "next-auth/react";
+import {  useSession } from "next-auth/react";
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 
@@ -14,10 +14,11 @@ interface ModalProps {
   item: { id: string; name: string; price: string; imageUrl: string;  description : string} | null;
 }
 
+
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
   const { lists, addList, addItemToList } = useLists();
   const [selectedListId, setSelectedListId] = useState<string>('');
-  const [newListName, setNewListName] = useState<string>('');
+  const [listName, setListName] = useState<string>('');
   const { data: session, status } = useSession();
   const router = useRouter();
   const { addToCart } = useCart();
@@ -26,32 +27,49 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
     if (isOpen) {
       // Reset the form when modal opens
       setSelectedListId('');
-      setNewListName('');
+      setListName('');
     }
   }, [isOpen]);
 
-  const handleAddToList = (e: { preventDefault: () => void; }) => {
-    if (!session) {
-      e.preventDefault(); 
-      router.push('/signin');
-    }
-
-    if (newListName) {
-      addList(newListName); 
-      setNewListName(''); 
-    } else if (selectedListId) {
-      const itemToAdd = {
-        id: uuidv4(),
-        name: item?.name ?? '',
-        price: item?.price ?? '',
-        image: item?.imageUrl ?? '',
-      };
-
-      addItemToList(selectedListId, itemToAdd); 
-      onClose(); 
+  const handleAddToList = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+  
+    if (!item) return;
+  
+    try {
+      // Si l'utilisateur veut créer une nouvelle liste
+      if (listName) {
+        // Créer une nouvelle liste
+        await addList(listName);
+        // Une fois la liste créée, trouver son ID dans `lists` (après le fetch)
+        const newList = lists.find(list => list.title === listName);
+        if (newList && newList.id) {
+          // Ajouter l'item à la nouvelle liste
+          await addItemToList(newList.id, {
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            image: item.imageUrl,
+          });
+        }
+      } else if (selectedListId) {
+        // Si l'utilisateur a choisi une liste existante
+        await addItemToList(selectedListId, {
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          image: item.imageUrl,
+        });
+      }
+  
+      // Fermer le modal après avoir ajouté l'article
+      onClose();
+    } catch (error) {
+      console.error('Failed to add item to list:', error);
     }
   };
-
+  
+  
   const handleAddToCart = () => {
     if (!item) return;
 
@@ -105,7 +123,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
               <option value="">Select a list</option>
               {lists.map(list => (
                 <option key={list.id} value={list.id}>
-                  {list.name}
+                  {list.title}
                 </option>
               ))}
             </select>
@@ -114,8 +132,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
             <label className="block text-white mb-2">ou creer une nouvelle liste</label>
             <input 
               type="text" 
-              value={newListName} 
-              onChange={(e) => setNewListName(e.target.value)} 
+              value={listName} 
+              onChange={(e) => setListName(e.target.value)} 
               placeholder="New list name" 
               className="border rounded p-2 w-full"
             />
@@ -125,7 +143,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
               onClick={handleAddToList} 
               className="bg-blue-500 text-white rounded-full px-4 py-3 hover:bg-blue-600"
             >
-              {newListName ? 'Creer une liste ' : 'Ajouter à une liste '}
+              {listName ? 'Creer une liste ' : 'Ajouter à une liste '}
             </button>
             <button 
               onClick={handleAddToCart} 

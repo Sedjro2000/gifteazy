@@ -1,23 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useLists } from '@/context/ListsContext'; 
 
 interface Product {
-  id: number;
+  id?: string;
   name: string;
-  price: number;
+  price: string;
+  image: string;
   description: string;
-  image: string
 }
 
 interface ListViewModalProps {
   isOpen: boolean;
-  list: { name: string; items: Product[] };
+  listId: string;
+  listTitle: string;
   onClose: () => void;
 }
 
-const ListViewModal: React.FC<ListViewModalProps> = ({ isOpen, list, onClose }) => {
-  console.log("contenu de la liste", list.items)
+const ListViewModal: React.FC<ListViewModalProps> = ({ isOpen, listId, listTitle, onClose }) => {
+  const [items, setItems] = useState<Product[]>([]);
+  const { getListItems } = useLists(); // Récupérer la méthode `getListItems` depuis le contexte
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (isOpen) {
+      const fetchItems = async () => {
+        setIsLoading(true);
+        const fetchedItems = await getListItems(listId);
+        setItems(fetchedItems || []);
+        setIsLoading(false);
+      };
+      fetchItems();
+    }
+  }, [isOpen, listId, getListItems]);
+  console.log("item trouvé ", items)
+  console.log( items.length)
+
   if (!isOpen) return null;
 
   return (
@@ -38,31 +57,47 @@ const ListViewModal: React.FC<ListViewModalProps> = ({ isOpen, list, onClose }) 
         transition={{ duration: 0.6 }}
       >
         {/* Titre de la liste */}
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">{list.name}</h2>
-        <p className="mb-4 text-gray-700 dark:text-gray-400">Total Items: {list.items.length}</p>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">{listTitle}</h2>
 
-        {/* Liste des produits */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {list.items.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white bg-opacity-70 dark:bg-gray-800 dark:bg-opacity-50 p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
-            >
-              <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">{item.name}</h3>
-           
-              <p className="mt-2 text-blue-600 dark:text-blue-400 font-semibold">${item.price}</p>
-              <Image  src={item.image} alt='item' width={50} height={50}/>
-            </div>
-          ))}
-        </div>
+        {isLoading ? (
+          <p className="text-gray-700 dark:text-gray-400">Chargement des items...</p>
+        ) : (
+          <>
+            <p className="mb-4 text-gray-700 dark:text-gray-400">Total Items: {items.length}</p>
+
+            {/* Liste des produits */}
+            {items.length === 0 ? (
+              <p className="text-gray-500">Aucun produit trouvé.</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {items.map((item) => (
+                  <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+                    <Image
+                      src={item.product.imageUrl}
+                      alt={item.product.name}
+                      width={150}
+                      height={150}
+                      className="object-cover rounded-md mb-2"
+                    />
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{item.product.name}</h3>
+                    <p className="text-gray-700 dark:text-gray-300 text-sm">{item.product.description}</p>
+                    <p className="text-lg font-bold text-gray-800 dark:text-white mt-2">{item.product.price}CFA</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
 
         {/* Bouton de fermeture */}
-        <button
-          onClick={onClose}
-          className="mt-6 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-400 transition duration-200"
-        >
-          Close
-        </button>
+        <div className="mt-4 text-right">
+          <button
+            onClick={onClose}
+            className="bg-red-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-red-400 transition duration-200"
+          >
+            Fermer
+          </button>
+        </div>
       </motion.div>
     </motion.div>
   );

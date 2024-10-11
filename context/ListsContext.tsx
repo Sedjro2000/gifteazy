@@ -2,103 +2,162 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 
 type Item = {
-  id: string;
+  id?: string;
   name: string;
   price: string;
   image: string;
+  description: string;
+
 };
 
 type List = {
   id: string;
-  name: string;
+  title: string;
   items: Item[];
 };
 
 type ListContextType = {
   lists: List[];
-  addList: (listName: string) => void;
-  addItemToList: (listId: string, item: Item) => void;
-  deleteList: (listId: string) => void;
-  deleteItemFromList: (listId: string, itemId: string) => void;
+  fetchLists: () => void;
+  getListItems: (listId: string) => Promise<Item[] | null>; // ajout de la méthode ici
+  addList: (listName: string) => Promise<void>;
+  addItemToList: (listId: string, item: Item) => Promise<void>;
+  deleteList: (listId: string) => Promise<void>;
+  deleteItemFromList: (listId: string, itemId: string) => Promise<void>;
 };
 
 const ListContext = createContext<ListContextType | undefined>(undefined);
 
 export const ListProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [lists, setLists] = useState<List[]>(() => {
-    if (typeof window !== 'undefined') {
-      const savedLists = localStorage.getItem('lists');
-      console.log('Loaded lists from localStorage:', savedLists);
-      return savedLists ? JSON.parse(savedLists) : [];
-    }
-    return [];
-  });
+  const [lists, setLists] = useState<List[]>([]);
 
+  // Fonction pour récupérer les listes depuis la base de données
+  const fetchLists = async () => {
+    try {
+      const res = await fetch('/api/lists');
+      if (res.ok) {
+        const data = await res.json();
+        setLists(data);
+      } else {
+        console.error('Failed to fetch lists');
+      }
+    } catch (error) {
+      console.error('Error fetching lists:', error);
+    }
+  };
+
+  // Fonction pour ajouter une nouvelle liste
+  const addList = async (listName: string) => {
+    if (!listName) {
+      console.error('List name is required');
+      return;
+    }
+  
+    try {
+      const res = await fetch('/api/lists', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title: listName ,  items: []  }),
+      });
+  
+      if (res.ok) {
+        const newList = await res.json();
+        setLists((prevLists) => [...prevLists, newList]);
+      } else {
+        const errorData = await res.json();
+        console.error('Failed to add list:', errorData);
+      }
+    } catch (error) {
+      console.error('Error adding list:', error);
+    }
+  };
+  
+
+  // Fonction pour ajouter un élément à une liste spécifique
+  const addItemToList = async (listId: string, item: Item) => {
+    try {
+      const res = await fetch(`/api/lists/${listId}/items`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productId: item.id, quantity: 1 }), // Quantité par défaut à 1
+      });
+
+      if (res.ok) {
+        const newItem = await res.json();
+        setLists((prevLists) =>
+          prevLists.map((list) =>
+            list.id === listId
+              ? { ...list, items: [...(list.items || []), newItem] } // Initialiser items si nécessaire
+              : list
+          )
+        );
+        
+      } else {
+        console.error('Failed to add item to list');
+      }
+    } catch (error) {
+      console.error('Error adding item to list:', error);
+    }
+  };
+
+  // Fonction pour supprimer une liste
+  const deleteList = async (listId: string) => {
+    try {
+      const res = await fetch(`/api/lists/${listId}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        setLists((prevLists) => prevLists.filter((list) => list.id !== listId));
+      } else {
+        console.error('Failed to delete list');
+      }
+    } catch (error) {
+      console.error('Error deleting list:', error);
+    }
+  };
+
+  // Fonction pour supprimer un élément d'une liste spécifique
+  const deleteItemFromList = async (listId: string, itemId: string) => {
+    try {
+      const res = await fetch(`/api/list/${listId}/items/${itemId}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        setLists((prevLists) =>
+          prevLists.map((list) =>
+            list.id === listId
+              ? { ...list, items: list.items.filter((item) => item.id !== itemId) }
+              : list
+          )
+        );
+      } else {
+        console.error('Failed to delete item from list');
+      }
+    } catch (error) {
+      console.error('Error deleting item from list:', error);
+    }
+  };
+
+  const getListItems = async (listId: string) => {
+    console.log("l'id de la liste",listId)
+    const res = await fetch(`/api/lists/${listId}/items`);
+    const items = await res.json();
+    console.log("les articles de la liste",items)
+    return items;
+  };
+  
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('lists', JSON.stringify(lists));
-      console.log('Saved lists to localStorage:', lists);
-    }
-  }, [lists]);
-
-  const addList = (name: string) => {
-    setLists(prevLists => {
-      const newList: List = {
-        id: generateUniqueId(),
-        name: name,
-        items: [],
-      };
-      console.log('Added new list:', newList);
-      return [...prevLists, newList];
-    });
-  };
-
-  const addItemToList = (listId: string, item: Item) => {
-    setLists(prevLists => {
-      const updatedLists = prevLists.map(list => {
-        if (list.id === listId) {
-          const updatedItems = [...list.items, { ...item, id: generateUniqueId() }];
-          return { ...list, items: updatedItems };
-        }
-        return list;
-      });
-      return updatedLists;
-    });
-  };
-
-  const deleteList = (listId: string) => {
-    setLists(prevLists => {
-      console.log('Current lists before deletion:', JSON.stringify(prevLists, null, 2));
-      const updatedLists = prevLists.filter(list => list.id !== listId);
-      console.log('Updated lists after deletion:', JSON.stringify(updatedLists, null, 2));
-      return updatedLists;
-    });
-  };
-
-  const deleteItemFromList = (listId: string, itemId: string) => {
-    setLists(prevLists => {
-      console.log('Current lists before item deletion:', JSON.stringify(prevLists, null, 2));
-
-      const updatedLists = prevLists.map(list => {
-        if (list.id === listId) {
-          const updatedItems = list.items.filter(item => item.id !== itemId);
-          console.log(`Updated items after deleting item ${itemId}:`, JSON.stringify(updatedItems, null, 2));
-          return { ...list, items: updatedItems };
-        }
-        return list;
-      });
-
-      console.log('Updated lists after item deletion:', JSON.stringify(updatedLists, null, 2));
-      return updatedLists;
-    });
-  };
-
-  const generateUniqueId = (): string => {
-    return '_' + Math.random().toString(36).substr(2, 9);
-  };
+    fetchLists(); // Charger les listes au démarrage
+  }, []);
 
   return (
-    <ListContext.Provider value={{ lists, addList, addItemToList, deleteList, deleteItemFromList }}>
+    <ListContext.Provider value={{ lists, fetchLists, addList, addItemToList, deleteList, deleteItemFromList, getListItems }}>
       {children}
     </ListContext.Provider>
   );

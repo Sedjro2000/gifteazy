@@ -79,8 +79,8 @@ export default function Home() {
       
       </div>
 
-      {/*<div className="grid md:grid-cols-3 gap-6 z-50 relative mt-12">
-        {[
+      <div className="grid md:grid-cols-3 gap-6 z-50 relative mt-12">
+        {/*{[
           { src: "/cadeau-1.jpg", title: "Cadeau de Luxe", desc: "Un cadeau premium pour des moments inoubliables." },
           { src: "/cadeau-2.jpg", title: "Cadeau Romantique", desc: "Le choix parfait pour célébrer l'amour." },
           { src: "/gift3d.jpg", title: "Cadeau Sur Mesure", desc: "Personnalisez votre cadeau pour rendre l'instant unique." },
@@ -98,8 +98,20 @@ export default function Home() {
               </button>
             </div>
           </div>
-        ))}
-      </div>*/}
+        ))}*/}
+ <div className="">
+  <Image 
+    src='/8888.png' 
+    alt="hero" 
+    layout="responsive" 
+    width={80} 
+    height={80} 
+    className="object-contain" 
+  />
+</div>
+
+      </div>
+    
     </div>
   );
 }

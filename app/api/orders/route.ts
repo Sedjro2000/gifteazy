@@ -15,8 +15,8 @@ export async function POST(req: NextRequest) {
     const { cartItems, amount,  } = await req.json();
 
     const orderItems = cartItems.map((item: { id: any; }) => ({
-        cartItemId: item.id, // Assure-toi que c'est l'ID de l'article du panier
-        // Tu peux ajouter d'autres propriétés si nécessaire
+        cartItemId: item.id,
+    
       }));
 
 
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
           paymentStatus: 'PENDING',
           deliveryStatus: 'PENDING',
           orderListItems: {
-            create: orderItems.map(item => ({
+            create: orderItems.map((item: { cartItemId: any; }) => ({
               cartItemId: item.cartItemId,
             }))
           }

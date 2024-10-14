@@ -34,7 +34,7 @@ export default function MerchantFormPage() {
 
     const userId = session.user.id; 
 
-    const response = await fetch('/api/merchant', {
+    const response = await fetch('/api/merchants', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

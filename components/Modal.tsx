@@ -7,6 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 import {  useSession } from "next-auth/react";
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
+import type { CartItem } from '@/context/CartContext';
+
 
 interface ModalProps {
   isOpen: boolean;
@@ -50,6 +52,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
             name: item.name,
             price: item.price,
             image: item.imageUrl,
+            description: ''
           });
         }
       } else if (selectedListId) {
@@ -59,6 +62,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
           name: item.name,
           price: item.price,
           image: item.imageUrl,
+          description: ''
         });
       }
   
@@ -72,21 +76,25 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, item }) => {
   
   const handleAddToCart = () => {
     if (!item) return;
-
-    const cartItem = {
+  
+    const cartItem: CartItem = {
       id: uuidv4(),  
       productId: item.id,  
-      quantity: 1,  
-      name: item.name,
-      price: item.price,
-      imageUrl: item.imageUrl
+      quantity: 1,
+      product: {
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        imageUrl: item.imageUrl,
+      }
     };
+  
     console.log('Cart item to add:', cartItem); 
     addToCart(cartItem);  
     onClose();  
-    console.log(cartItem)
+    console.log(cartItem);
   };
- 
+  
 
   if (!isOpen || !item) return null;
 

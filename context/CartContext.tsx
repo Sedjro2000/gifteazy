@@ -224,3 +224,6 @@ export const useCart = () => {
   }
   return context;
 };
+
+export type { CartItem };
+

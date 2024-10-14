@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useLists } from '../../context/ListsContext';
 import { FaShareAlt, FaTrash, FaEye, FaPlus } from 'react-icons/fa';
 import CreateListModal from '@/components/CreateListModal';
-import ListViewModal from '@/components/ListViewModal';
+
 import ShareModal from '@/components/ShareModal';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 
@@ -120,7 +120,7 @@ const ListsPage: React.FC = () => {
       {/* Modal de création */}
       <CreateListModal isOpen={isCreateModalOpen} onClose={closeCreateModal} onCreate={handleCreateList} />
 
-      {/* Modal de visualisation de liste */}
+      {/* Modal de visualisation de liste *
       {selectedList && (
         <ListViewModal
           isOpen={isListViewModalOpen}
@@ -128,7 +128,7 @@ const ListsPage: React.FC = () => {
           listTitle={selectedList.title}
           onClose={() => setIsListViewModalOpen(false)}
         />
-      )}
+      )}/}
 
       {/* Modal de partage */}
       <ShareModal

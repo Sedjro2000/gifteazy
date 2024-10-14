@@ -78,13 +78,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid categoryId format' }, { status: 400 });
     }
 
-    // Check if filters is an object and convert to an array
-    const filterEntries = typeof filters === 'object' && filters !== null 
-      ? Object.entries(filters).map(([filterId, value]) => ({
-          filter: { connect: { id: filterId } }, // Ensure filterId connects to the appropriate filter
-          value,
-        })) 
-      : []; // Default to an empty array if filters is not valid
+// Check if filters is an object and convert to an array
+const filterEntries = Array.isArray(filters)
+  ? filters.map((filterId: string) => ({
+      filter: { connect: { id: filterId } },
+      value: "", // Provide a default value or infer the correct type
+    }))
+  : []; // Default to an empty array if filters is not valid
 
     // Création du produit
     const product = await prisma.product.create({
@@ -113,9 +113,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
     console.error(error);
-    if (error.code === 'P2023') {
-      return NextResponse.json({ error: 'Invalid ObjectID provided' }, { status: 400 });
-    }
+
     return NextResponse.json(
       { error: 'Erreur lors de la création du produit' },
       { status: 500 }

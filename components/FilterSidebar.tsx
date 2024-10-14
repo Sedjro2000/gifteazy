@@ -1,5 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react';
+import Slider from 'rc-slider'; // Slider pour le filtre de prix
+import 'rc-slider/assets/index.css'; // Styles de base pour le slider
 
 type FilterSidebarProps = {
   filters: Record<string, any>;
@@ -9,9 +11,13 @@ type FilterSidebarProps = {
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, priceRange, onFilterChange }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [minPrice, setMinPrice] = useState<string>(priceRange.min);
-  const [maxPrice, setMaxPrice] = useState<string>(priceRange.max);
+  const [minPrice, setMinPrice] = useState<number>(parseInt(priceRange.min));
+  const [maxPrice, setMaxPrice] = useState<number>(parseInt(priceRange.max));
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [sizes, setSizes] = useState<string[]>(['XS', 'S', 'M', 'L', 'XL']);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [colors, setColors] = useState<string[]>(['Red', 'Blue', 'Green', 'Black', 'White']);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
 
   useEffect(() => {
     // Récupérer les catégories depuis l'API au chargement
@@ -29,54 +35,100 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, priceRange, onFi
 
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    onFilterChange({ ...filters, categoryId }, { min: minPrice, max: maxPrice });
+    onFilterChange({ ...filters, categoryId }, { min: minPrice.toString(), max: maxPrice.toString() });
   };
 
-  const handlePriceChange = (min: string, max: string) => {
-    setMinPrice(min);
-    setMaxPrice(max);
-    onFilterChange(filters, { min, max });
+  const handlePriceChange = (value: number | number[]) => {
+    if (Array.isArray(value)) {
+      // S'assurer que value est bien un tableau (range slider)
+      setMinPrice(value[0]);
+      setMaxPrice(value[1]);
+      onFilterChange(filters, { min: value[0].toString(), max: value[1].toString() });
+    }
+  };
+
+  const handleSizeChange = (size: string) => {
+    setSelectedSize(size);
+    onFilterChange({ ...filters, size }, { min: minPrice.toString(), max: maxPrice.toString() });
+  };
+
+  const handleColorChange = (color: string) => {
+    setSelectedColor(color);
+    onFilterChange({ ...filters, color }, { min: minPrice.toString(), max: maxPrice.toString() });
   };
 
   return (
-    <div className="w-1/4 p-4 bg-white shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Filtrer les produits</h2>
-      
-      {/* Sélecteur de catégories */}
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold">Catégories</h3>
-        <ul>
+    <div className="w-full p-6 bg-white shadow-lg rounded-lg">
+      <h2 className="text-2xl font-bold mb-6">Filtrer les produits</h2>
+
+      {/* Section des catégories dans un grand conteneur flexible */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-3">Catégories</h3>
+        <div className="flex flex-wrap gap-4">
           {categories.map((category) => (
-            <li key={category.id} className="my-2">
-              <button 
-                className={`px-2 py-1 rounded ${selectedCategory === category.id ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                onClick={() => handleCategoryChange(category.id)}
-              >
-                {category.name}
-              </button>
-            </li>
+            <button
+              key={category.id}
+              className={`px-4 py-2 rounded-lg flex-1 min-w-[150px] text-center ${
+                selectedCategory === category.id ? 'bg-blue-600 text-white' : 'bg-gray-100'
+              }`}
+              onClick={() => handleCategoryChange(category.id)}
+            >
+              {category.name}
+            </button>
           ))}
-        </ul>
+        </div>
       </div>
-      
-      {/* Filtre par prix */}
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold">Plage de prix</h3>
-        <div className="flex gap-2">
-          <input 
-            type="number" 
-            placeholder="Min" 
-            value={minPrice} 
-            onChange={(e) => handlePriceChange(e.target.value, maxPrice)} 
-            className="w-1/2 p-1 border rounded"
-          />
-          <input 
-            type="number" 
-            placeholder="Max" 
-            value={maxPrice} 
-            onChange={(e) => handlePriceChange(minPrice, e.target.value)} 
-            className="w-1/2 p-1 border rounded"
-          />
+
+      {/* Filtre de prix avec Slider */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-3">Plage de prix</h3>
+        <Slider
+          range
+          min={0}
+          max={1000}
+          value={[minPrice, maxPrice]}
+          onChange={handlePriceChange}
+          trackStyle={[{ backgroundColor: 'blue', height: 6 }]}
+          handleStyle={[{ borderColor: 'blue', height: 20, width: 20 }]}
+        />
+        <div className="flex justify-between mt-2 text-sm">
+          <span>${minPrice}</span>
+          <span>${maxPrice}</span>
+        </div>
+      </div>
+
+      {/* Filtre de taille */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-3">Tailles</h3>
+        <div className="flex space-x-2">
+          {sizes.map((size) => (
+            <button
+              key={size}
+              className={`px-3 py-1 rounded-full border ${
+                selectedSize === size ? 'bg-blue-600 text-white' : 'border-gray-300'
+              }`}
+              onClick={() => handleSizeChange(size)}
+            >
+              {size}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Filtre de couleurs */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-3">Couleurs</h3>
+        <div className="flex space-x-2">
+          {colors.map((color) => (
+            <button
+              key={color}
+              className={`w-8 h-8 rounded-full border ${
+                selectedColor === color ? 'ring-2 ring-blue-600' : ''
+              }`}
+              style={{ backgroundColor: color.toLowerCase() }}
+              onClick={() => handleColorChange(color)}
+            />
+          ))}
         </div>
       </div>
     </div>

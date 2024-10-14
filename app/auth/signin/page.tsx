@@ -70,10 +70,23 @@ const Auth = () => {
     }
 
     useEffect(() => {
+       //  console.log("Auth Status:", status); //Affiche l'état d'authentification
+       // console.log("Session:", session); // Affiche la session actuelle
+       // console.log("Callback URL:", callbackUrl); // Vérifie l'URL de rappel
+    
         if (status === "authenticated" && session?.user) {
-            router.push(callbackUrl || "/");
+            console.log("Utilisateur authentifié:", session.user);
+    
+            if (session.user.role === "MERCHANT") {
+                console.log("Redirection vers le tableau de bord marchand");
+                router.push("/dashboard/merchant");
+            } else {
+                console.log("Redirection vers la page par défaut");
+                router.push(callbackUrl || "/"); 
+            }
         }
     }, [status, session, router, callbackUrl]);
+    
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#b92b27] via-[#1565C0] to-[#f12711] p-4">
@@ -169,7 +182,7 @@ const Auth = () => {
                     </div>
                     <div className="mt-4 text-center">
                         <p className="text-sm text-white">
-                            {isSignUp ? "Déjà un compte ?" : "Pas de compte?"}{" "}
+                            {isSignUp ? " Pas de compte??" : "Déjà un compte "}{" "}
                             <button onClick={toggleSignUp} className="text-blue-500 hover:underline">
                                 {isSignUp ? "Inscrivez-vous " : "Se connecter"}
                             </button>

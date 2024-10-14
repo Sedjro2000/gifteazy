@@ -82,7 +82,8 @@ import bcrypt from 'bcrypt';
             },
             async authorize(credentials) {
                 const user = await prisma.user.findUnique({
-                    where: { email: credentials?.email }
+                    where: { email: credentials?.email },
+                    select: { id: true, name: true, email: true, role: true, password: true }
                 });
 
                 if (!user) {
@@ -94,7 +95,7 @@ import bcrypt from 'bcrypt';
                     throw new Error("Incorrect password");
                 }
 
-                return { id: user.id, name: user.name, email: user.email };
+                return { id: user.id, name: user.name, email: user.email, role: user.role };
             },
         }),
         GoogleProvider({
@@ -132,12 +133,8 @@ import bcrypt from 'bcrypt';
             if (token && session.user) {
                 session.user.id = token.id;
                 session.jwt = token;
-           
-
-            
-              
-             
-            }
+                session.user.role = token.role
+           }
             console.log("Updated session:", session);
             return session;
         },

@@ -1,7 +1,14 @@
+'use client'
 import React from "react";
 import Link from "next/link";
 import { FaSignOutAlt, FaUser } from "react-icons/fa";
+import { signOut, useSession } from "next-auth/react";
 import Image from 'next/image'
+
+const handleLogout = () => {
+
+  signOut({ callbackUrl: '/' });
+};
 
 const Navbar = () => {
   return (
@@ -12,7 +19,7 @@ const Navbar = () => {
         <div className="flex items-center space-x-4">
           <button className=" flex items-center space-x-4 text-black hover:text-gray-600"> <FaUser size={32} /> <span>Mon espace</span></button>
 
-          <button className="flex items-center space-x-2 text-red-600 hover:text-red-800">
+          <button className="flex items-center space-x-2 text-red-600 hover:text-red-800" onClick={handleLogout}>
             <FaSignOutAlt size={32}/>
             <span>Déconnexion</span>
           </button>

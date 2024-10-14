@@ -197,7 +197,7 @@ const router = useRouter()
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
         <div className="bg-white p-4 rounded-lg shadow-md flex items-center gap-3">
           <span className="bg-pink-100 p-2 rounded-full">🚚</span>
-          <p>Livraison Gratuite dès 50000 CFA d'achat</p>
+          <p>Livraison Gratuite dès 50000 CFA d&apos; achat</p>
         </div>
         <div className="bg-white p-4 rounded-lg shadow-md flex items-center gap-3">
           <span className="bg-yellow-100 p-2 rounded-full">📞</span>

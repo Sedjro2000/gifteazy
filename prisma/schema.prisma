@@ -84,17 +84,18 @@ model Product {
 }
 
 model Category {
-  id              String           @id @default(auto()) @map("_id") @db.ObjectId
-  name            String           @unique
-  description     String?
-  parentId        String ?          @db.ObjectId
-  parent          Category?        @relation(name: "ParentCategory", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  children        Category[]       @relation(name: "ParentCategory")
+  id                String           @id @default(auto()) @map("_id") @db.ObjectId
+  name              String           @unique
+  description       String?
+  parentId          String?          @db.ObjectId
+  parent            Category?        @relation(name: "ParentCategory", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children          Category[]       @relation(name: "ParentCategory")
   productCategories ProductCategory[]
-  filters         Filter[]   
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime         @updatedAt     
+  filters           CategoryFilter[] // Relation avec les filtres via la table de liaison
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
 }
+
 
 model ProductCategory {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -110,17 +111,30 @@ model ProductCategory {
 }
 
 model Filter {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String   // Nom du filtre, ex : "Taille", "Couleur", etc.
-  type        String   // Type de filtre, ex : "text", "select", "range", etc.
-  values      String[] // Valeurs possibles pour le filtre, ex : ["S", "M", "L"] pour "Taille"
-  categoryId  String   @db.ObjectId // Référence à la catégorie
-  category    Category @relation(fields: [categoryId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  name        String          // Nom du filtre, ex : "Taille", "Couleur", etc.
+  type        String          // Type de filtre, ex : "text", "select", "range", etc.
+  values      String[]        // Valeurs possibles pour le filtre, ex : ["S", "M", "L"] pour "Taille"
+  categories  CategoryFilter[] // Relation avec les catégories via la table de liaison
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
 
   ProductFilter ProductFilter[]
 }
+
+model CategoryFilter {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  categoryId String   @db.ObjectId
+  filterId   String   @db.ObjectId
+  category   Category @relation(fields: [categoryId], references: [id])
+  filter     Filter   @relation(fields: [filterId], references: [id])
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([categoryId, filterId])
+}
+
 
 model ProductFilter {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId

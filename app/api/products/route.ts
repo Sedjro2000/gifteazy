@@ -106,7 +106,7 @@ const filterEntries = Array.isArray(filters)
       },
       include: {
         productCategories: true,
-        filters: true, // Inclure les filtres dans la réponse
+        filters: true, // Inclure les filtres dans la réponseLors
       },
     });
 

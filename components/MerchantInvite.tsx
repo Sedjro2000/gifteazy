@@ -18,15 +18,15 @@ const MerchantInvite = () => {
   return (
     <div className="max-w-screen-2xl mx-auto flex items-center justify-between bg-white p-10">
  
-      <div className="w-1/2">
-        <Image
-          src="/merchant.png" 
-          alt="Invitation au marchand"
-          width={400} 
-          height={300} 
-          className="object-contain"
-        />
-      </div>
+ <div className="w-1/2 ">
+  <Image
+    src="/aaa.png" 
+    alt="Invitation au marchand"
+    width={400} 
+    height={300} 
+    className="object-cover w-full h-full"
+  />
+</div>
 
     
       <div className="w-1/2 text-center">

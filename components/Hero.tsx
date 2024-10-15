@@ -47,6 +47,8 @@ export default function Home() {
             apporter de la joie et créer des souvenirs durables.
           </p>
 
+
+
           <div className="mt-12 grid sm:grid-cols-3 gap-4 items-start">
             {[
               { icon: FaStar, title: "Exclusif", desc: "Édition Limitée" },
@@ -76,7 +78,15 @@ export default function Home() {
           <CtaButton />
         </div>
 
-      
+             
+  <Image 
+    src='/give.png' 
+    alt="hero" 
+    layout="responsive" 
+    width={80} 
+    height={80} 
+    className="object-contain border-none p-4" 
+  />
       </div>
 
       <div className="grid md:grid-cols-3 gap-6 z-50 relative mt-12">
@@ -99,16 +109,7 @@ export default function Home() {
             </div>
           </div>
         ))}*/}
- <div className="">
-  <Image 
-    src='/8888.png' 
-    alt="hero" 
-    layout="responsive" 
-    width={80} 
-    height={80} 
-    className="object-contain" 
-  />
-</div>
+
 
       </div>
     

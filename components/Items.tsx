@@ -127,18 +127,21 @@ const ProductPage: React.FC = () => {
   }
 
   return (
-    <div className="flex">
+    <div className="flex p-8 max-w-screen-2xl mx-auto ">
       {/* Sidebar des filtres */}
+      <div className=" w-1/4">
       <FilterSidebar
         filters={filters}
         priceRange={priceRange}
         onFilterChange={handleFilterChange}
       />
+      </div>
+  
 
       {/* Liste des produits */}
-      <div className="p-8 max-w-screen-2xl mx-auto w-3/4">
+      <div className="w-3/4">
         <h2 className="text-2xl font-bold mb-4">Get inspired</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6 p-4">
           {filteredItems.map((item, index) => (
             <div
               key={index}
@@ -157,7 +160,7 @@ const ProductPage: React.FC = () => {
                 <h3 className="text-lg font-semibold">{item.name}</h3>
                 <p className="text-gray-600">{item.price}</p>
                 <div className="flex justify-between items-center mt-2">
-                  <span className="text-yellow-500">★★★★★</span>
+                  {/*<span className="text-yellow-500">★★★★★</span>*/}
                   {item.description}
                   <button
                     onClick={() => handleItemClick(item)}

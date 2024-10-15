@@ -18,6 +18,11 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, priceRange, onFi
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [colors, setColors] = useState<string[]>(['Red', 'Blue', 'Green', 'Black', 'White']);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [genders, setGenders] = useState<string[]>(['Homme', 'Femme', 'Unisexe']);
+  const [selectedGender, setSelectedGender] = useState<string | null>(null);
+  const [ageRanges, setAgeRanges] = useState<string[]>(['Enfant', 'Adolescent', 'Adulte']);
+  const [selectedAgeRange, setSelectedAgeRange] = useState<string | null>(null);
+  const [rating, setRating] = useState<number | null>(null);
 
   useEffect(() => {
     // Récupérer les catégories depuis l'API au chargement
@@ -57,6 +62,21 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, priceRange, onFi
     onFilterChange({ ...filters, color }, { min: minPrice.toString(), max: maxPrice.toString() });
   };
 
+  const handleGenderChange = (gender: string) => {
+    setSelectedGender(gender);
+    onFilterChange({ ...filters, gender }, { min: minPrice.toString(), max: maxPrice.toString() });
+  };
+
+  const handleAgeRangeChange = (ageRange: string) => {
+    setSelectedAgeRange(ageRange);
+    onFilterChange({ ...filters, ageRange }, { min: minPrice.toString(), max: maxPrice.toString() });
+  };
+
+  const handleRatingChange = (rating: number) => {
+    setRating(rating);
+    onFilterChange({ ...filters, rating }, { min: minPrice.toString(), max: maxPrice.toString() });
+  };
+
   return (
     <div className="w-full p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-2xl font-bold mb-6">Filtrer les produits</h2>
@@ -64,11 +84,11 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, priceRange, onFi
       {/* Section des catégories dans un grand conteneur flexible */}
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-3">Catégories</h3>
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-2">
           {categories.map((category) => (
             <button
               key={category.id}
-              className={`px-4 py-2 rounded-lg flex-1 min-w-[150px] text-center ${
+              className={`px-4 py-2 min-h-[40px] rounded-lg text-center whitespace-nowrap ${
                 selectedCategory === category.id ? 'bg-blue-600 text-white' : 'bg-gray-100'
               }`}
               onClick={() => handleCategoryChange(category.id)}
@@ -85,15 +105,15 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, priceRange, onFi
         <Slider
           range
           min={0}
-          max={1000}
+          max={1000000}
           value={[minPrice, maxPrice]}
           onChange={handlePriceChange}
           trackStyle={[{ backgroundColor: 'blue', height: 6 }]}
           handleStyle={[{ borderColor: 'blue', height: 20, width: 20 }]}
         />
         <div className="flex justify-between mt-2 text-sm">
-          <span>${minPrice}</span>
-          <span>${maxPrice}</span>
+          <span>{minPrice}</span>
+          <span>{maxPrice}</span>
         </div>
       </div>
 
@@ -115,19 +135,56 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, priceRange, onFi
         </div>
       </div>
 
-      {/* Filtre de couleurs */}
+      {/* Filtre de genres */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-3">Couleurs</h3>
+        <h3 className="text-lg font-semibold mb-3">Genre</h3>
         <div className="flex space-x-2">
-          {colors.map((color) => (
+          {genders.map((gender) => (
             <button
-              key={color}
-              className={`w-8 h-8 rounded-full border ${
-                selectedColor === color ? 'ring-2 ring-blue-600' : ''
+              key={gender}
+              className={`px-3 py-1 rounded-full border ${
+                selectedGender === gender ? 'bg-blue-600 text-white' : 'border-gray-300'
               }`}
-              style={{ backgroundColor: color.toLowerCase() }}
-              onClick={() => handleColorChange(color)}
-            />
+              onClick={() => handleGenderChange(gender)}
+            >
+              {gender}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Filtre de tranche d'âge */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-3">Tranche d'âge</h3>
+        <div className="flex space-x-2">
+          {ageRanges.map((ageRange) => (
+            <button
+              key={ageRange}
+              className={`px-3 py-1 rounded-full border ${
+                selectedAgeRange === ageRange ? 'bg-blue-600 text-white' : 'border-gray-300'
+              }`}
+              onClick={() => handleAgeRangeChange(ageRange)}
+            >
+              {ageRange}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Filtre de note */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-3">Note</h3>
+        <div className="flex space-x-2">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button
+              key={star}
+              className={`px-3 py-1 rounded-full border ${
+                rating === star ? 'bg-blue-600 text-white' : 'border-gray-300'
+              }`}
+              onClick={() => handleRatingChange(star)}
+            >
+              {`${star}★`}
+            </button>
           ))}
         </div>
       </div>

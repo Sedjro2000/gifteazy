@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
     console.log('Filtres associés à la catégorie:', category.filters);
 
     // Application des filtres dynamiques
-    category?.filters.forEach((filter: { name: string; type: string }) => {
+    /*category?.filters.forEach((filter: { name: string; type: string }) => {
       const value = searchParams.get(filter.name);
       if (value) {
         console.log(`Application du filtre ${filter.name} avec la valeur :`, value);
@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
           filters[filter.name] = { in: value.split(',') }; // Gérer plusieurs valeurs
         }
       }
-    });
+    });*/
   }
 
   console.log('Filtres finaux:', filters);

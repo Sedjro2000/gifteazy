@@ -155,7 +155,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, priceRange, onFi
 
       {/* Filtre de tranche d'âge */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-3">Tranche d'âge</h3>
+        <h3 className="text-lg font-semibold mb-3">Tranche d&apos;âge</h3>
         <div className="flex space-x-2">
           {ageRanges.map((ageRange) => (
             <button

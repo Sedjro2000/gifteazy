@@ -138,9 +138,9 @@ model CategoryFilter {
 
 model ProductFilter {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  productId   String   @db.ObjectId // ID du produit
-  filterId    String   @db.ObjectId // ID du filtre appliqué
-  value       String   // Valeur choisie pour le filtre
+  productId   String   @db.ObjectId 
+  filterId    String   @db.ObjectId 
+  value       String   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

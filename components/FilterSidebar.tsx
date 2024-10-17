@@ -112,8 +112,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, priceRange, onFi
           handleStyle={[{ borderColor: 'blue', height: 20, width: 20 }]}
         />
         <div className="flex justify-between mt-2 text-sm">
-          <span>{minPrice}</span>
-          <span>{maxPrice}</span>
+          <span>{minPrice} CFA</span>
+          <span>{maxPrice} CFA </span>
         </div>
       </div>
 

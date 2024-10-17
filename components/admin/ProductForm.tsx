@@ -1,12 +1,8 @@
+"use client";
+import { useState, useEffect } from "react";
+import Select, { MultiValue } from "react-select";
 
-      
-      
-      
-      'use client';
-import { useState, useEffect } from 'react';
-import Select, { MultiValue } from 'react-select';
 
-// Définition du type Filter
 type Filter = {
   id: string;
   name: string;
@@ -16,25 +12,29 @@ type Filter = {
 
 function ProductFormModal({
   onClose,
-  onProductCreated,  // fonction appelée après création
+  onProductCreated, // fonction appelée après création
 }: {
   onClose: () => void;
-  onProductCreated: () => void; 
+  onProductCreated: () => void;
 }) {
-  const [merchantId] = useState('64bfc17f4dabc1234def5678');
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
+  const [merchantId] = useState("64bfc17f4dabc1234def5678");
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [stock, setStock] = useState('');
+  const [stock, setStock] = useState("");
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>(
+    []
+  );
   const [filters, setFilters] = useState<Filter[]>([]);
-  const [selectedFilters, setSelectedFilters] = useState<{ [key: string]: string | null }>({}); // Filtres sélectionnés
+  const [selectedFilters, setSelectedFilters] = useState<{
+    [key: string]: string | null;
+  }>({}); // Filtres sélectionnés
 
   useEffect(() => {
     async function fetchCategories() {
-      const res = await fetch('/api/categories');
+      const res = await fetch("/api/categories");
       const data = await res.json();
       console.log("Categories fetched: ", data); // Log pour vérifier les catégories récupérées
       setCategories(data);
@@ -51,48 +51,32 @@ function ProductFormModal({
       }
   
       try {
-        console.log("Fetching filters for category IDs: ", categoryIds);
+        // Prépare les IDs des catégories en les joignant avec une virgule
+        const categoryIdString = categoryIds.join(',');
   
-        const filterPromises = categoryIds.map((id) =>
-          fetch(`/api/filters/category/${id}`).then((res) => {
-            if (!res.ok) {
-              throw new Error(`Failed to fetch filters for category ${id}`);
-            }
-            return res.json();
-          })
-        );
+        console.log("Fetching filters for category IDs: ", categoryIdString);
   
-        const filtersArray = await Promise.all(filterPromises);
+        // Appel à la nouvelle route API pour récupérer les filtres en fonction des IDs des catégories
+        const res = await fetch(`/api/filters/categories/${categoryIdString}`);
   
-        // Combiner les filtres de toutes les catégories
-        const combinedFilters = filtersArray.flat();
+        if (!res.ok) {
+          throw new Error(`Failed to fetch filters for categories ${categoryIdString}`);
+        }
   
-        // Utilisation de Map pour dédupliquer les filtres par nom ou type
-        const uniqueFiltersMap = new Map<string, Filter>();
+        const filters = await res.json();
   
-        combinedFilters.forEach((filter: Filter) => {
-          if (!uniqueFiltersMap.has(filter.name)) {
-            uniqueFiltersMap.set(filter.name, filter);
-          }
-        });
+        console.log("Filters fetched: ", filters); // Log pour vérifier les filtres récupérés
   
-        // Convertir le Map en tableau
-        const uniqueFilters = Array.from(uniqueFiltersMap.values());
-        console.log("Unique filters: ", uniqueFilters); // Log pour vérifier les filtres dédupliqués
-        setFilters(uniqueFilters);
-
-        console.log("filtersArray: ", filtersArray);
-        console.log("combinedFilters: ", combinedFilters);
-        console.log("Type of combinedFilters: ", Array.isArray(combinedFilters));
+        // Mettre à jour les filtres récupérés
+        setFilters(filters);
+  
       } catch (error) {
         console.error("Error fetching filters: ", error);
       }
     }
-
-    
+  
     fetchFilters();
   }, [categoryIds]);
-  
   
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,7 +90,7 @@ function ProductFormModal({
     e.preventDefault();
 
     if (!imageFile) {
-      console.error('No image selected');
+      console.error("No image selected");
       return;
     }
 
@@ -130,10 +114,10 @@ function ProductFormModal({
 
         console.log("Submitting product: ", product); // Log pour vérifier les données du produit
 
-        const res = await fetch('/api/products', {
-          method: 'POST',
+        const res = await fetch("/api/products", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(product),
         });
@@ -142,20 +126,21 @@ function ProductFormModal({
           onProductCreated();
           onClose();
         } else {
-          console.error('Failed to create product');
+          console.error("Failed to create product");
         }
       } catch (error) {
-        console.error('Error creating product:', error);
+        console.error("Error creating product:", error);
       }
     };
   };
 
-  const handleCategoryChange = (selectedOptions: MultiValue<{ id: string; name: string }>) => {
+  const handleCategoryChange = (
+    selectedOptions: MultiValue<{ id: string; name: string }>
+  ) => {
     const selectedCategoryIds = selectedOptions.map((opt) => opt.id);
     console.log("Selected category IDs: ", selectedCategoryIds); // Log pour vérifier la sélection des catégories
     setCategoryIds(selectedCategoryIds);
   };
-  
 
   const handleFilterChange = (filterId: string, value: string) => {
     console.log("Filter changed: ", filterId, value); // Log pour vérifier les filtres sélectionnés
@@ -171,7 +156,9 @@ function ProductFormModal({
         <h2 className="text-xl font-bold mb-4">Ajouter un produit</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Nom</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Nom
+            </label>
             <input
               type="text"
               value={name}
@@ -181,7 +168,9 @@ function ProductFormModal({
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Description</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Description
+            </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -190,7 +179,9 @@ function ProductFormModal({
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Prix</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Prix
+            </label>
             <input
               type="number"
               value={price}
@@ -200,11 +191,15 @@ function ProductFormModal({
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Image</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Image
+            </label>
             <input type="file" accept="image/*" onChange={handleFileChange} />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Stock</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Stock
+            </label>
             <input
               type="number"
               value={stock}
@@ -214,10 +209,14 @@ function ProductFormModal({
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Catégories</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Catégories
+            </label>
             <Select
               isMulti
-              value={categories.filter((category) => categoryIds.includes(category.id))}
+              value={categories.filter((category) =>
+                categoryIds.includes(category.id)
+              )}
               onChange={handleCategoryChange}
               getOptionLabel={(category) => category.name}
               getOptionValue={(category) => category.id}
@@ -227,30 +226,34 @@ function ProductFormModal({
 
           {/* Ajout des filtres dynamiques */}
           {Array.isArray(filters) && filters.length > 0 && (
-  <div className="mb-4">
-    <h3 className="text-lg font-bold mb-2">Filtres</h3>
-    {filters.map((filter) => (
-      <div key={filter.id} className="mb-2">
-        <label className="block text-gray-700 text-sm font-bold mb-2">{filter.name}</label>
-        <select
-          className="w-full px-3 py-2 border rounded-lg mb-4"
-          onChange={(e) => handleFilterChange(filter.name, e.target.value)}
-        >
-          <option value="">Sélectionner une option</option>
-          {filter.values && filter.values.length > 0 ? (
-            filter.values.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))
-          ) : (
-            <option disabled>Aucune option disponible</option>
+            <div className="mb-4">
+              <h3 className="text-lg font-bold mb-2">Filtres</h3>
+              {filters.map((filter) => (
+                <div key={filter.id} className="mb-2">
+                  <label className="block text-gray-700 text-sm font-bold mb-2">
+                    {filter.name}
+                  </label>
+                  <select
+                    className="w-full px-3 py-2 border rounded-lg mb-4"
+                    onChange={(e) =>
+                      handleFilterChange(filter.name, e.target.value)
+                    }
+                  >
+                    <option value="">Sélectionner une option</option>
+                    {filter.values && filter.values.length > 0 ? (
+                      filter.values.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))
+                    ) : (
+                      <option disabled>Aucune option disponible</option>
+                    )}
+                  </select>
+                </div>
+              ))}
+            </div>
           )}
-        </select>
-      </div>
-    ))}
-  </div>
-)}
 
           <div className="flex justify-end">
             <button
@@ -264,7 +267,7 @@ function ProductFormModal({
               type="submit"
               className="bg-purple-600 text-white px-4 py-2 rounded-lg"
             >
-Ajouter
+              Ajouter
             </button>
           </div>
         </form>

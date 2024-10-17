@@ -13,11 +13,30 @@ const swaggerDefinition = {
       description: 'Serveur local',
     },
   ],
+
+  components: {
+    schemas: {
+      Filter: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', example: 'filter1' },
+          name: { type: 'string', example: 'Taille' },
+          type: { type: 'string', example: 'Sélection' },
+          values: { type: 'array', items: { type: 'string' }, example: ["S", "M", "L"] },
+          categories: {
+            type: 'array',
+            items: { type: 'string' },
+            example: ["cat1", "cat2"]
+          }
+        }
+      }
+    }
+  }
 };
 
 const options = {
   swaggerDefinition,
-  apis: ['./app/api/**/*.ts'], // Le chemin vers tes fichiers d'API
+  apis: ['./app/api/**/*.ts'], 
 };
 
 const swaggerSpec = swaggerJSDoc(options);
